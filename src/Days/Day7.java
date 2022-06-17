@@ -11,12 +11,13 @@ import java.util.regex.Pattern;
 
 public class Day7 {
     Map<String, String> nodes = new HashMap<>();
+    String bOutput;
 
     public Day7() {
         try (Scanner scanner = new Scanner(new File("resources/D7/input"))) {
             while (scanner.hasNext()) {
                 String text = scanner.nextLine();
-                process_input(text);
+                process_input(text, bOutput);
             }
 
         } catch (FileNotFoundException fnfe) {
@@ -27,6 +28,20 @@ public class Day7 {
 
         String checkFor = "a";
         System.out.println("D7 - The value of " + checkFor + " : " + nodes.get(checkFor));
+        bOutput = nodes.get(checkFor);
+        nodes.clear();
+        try (Scanner scanner = new Scanner(new File("resources/D7/input"))) {
+            while (scanner.hasNext()) {
+                String text = scanner.nextLine();
+                process_input(text, bOutput);
+            }
+
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        }
+        while (resolveDirect() || replaceResolved() || resolveOpr()) {
+        }
+        System.out.println("D7/2 - The value of " + checkFor + " : " + nodes.get(checkFor));
 
     }
 
@@ -233,10 +248,14 @@ public class Day7 {
         return x.toString();
     }
 
-    private void process_input(String text) {
+    private void process_input(String text, String bOutput) {
         Matcher matcher = Pattern.compile("(.+) -> (\\w+)").matcher(text);
         if (matcher.find()) {
-            nodes.put(matcher.group(2), matcher.group(1));
+            if (matcher.group(2).equals("b") && bOutput != null) {
+                nodes.put(matcher.group(2), bOutput);
+            } else {
+                nodes.put(matcher.group(2), matcher.group(1));
+            }
         }
     }
 
