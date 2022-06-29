@@ -1,7 +1,7 @@
 import Days.*;
 
 class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         System.out.println("Hello 2015 Advent!!!");
         new Day1();
         new Day2();
@@ -14,5 +14,6 @@ class Main {
         new Day9();
         new Day10();
         new Day11();
+        new Day12();
     }
 }
