@@ -17,5 +17,6 @@ class Main {
         new Day12();
         new Day13();
         new Day14();
+        new Day15();
     }
 }
