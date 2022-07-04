@@ -22,5 +22,6 @@ class Main {
         new Day17();
         new Day18();
         new Day19();
+        new Day20();
     }
 }
