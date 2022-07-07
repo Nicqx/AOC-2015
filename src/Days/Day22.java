@@ -2,13 +2,13 @@ package Days;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day22 {
+    enum action {INSTANT, TIMED}
+
     public Day22() {
         int bossHit = 0;
         int bossDamage = 0;
@@ -27,249 +27,380 @@ public class Day22 {
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
-
-
-        int[] functionNumbers = {0, 1, 2, 3, 4};
-        List<List<Integer>> functionPermutations = permute(functionNumbers);
+        Boss boss;
+        Player player;
+        SpellContainer spellContainer;
         int leastMana = Integer.MAX_VALUE;
-        for (List<Integer> combination : functionPermutations) {
-            Spells spells = new Spells(new Boss(bossHit, bossDamage), new Player());
-            Sequence s = new Sequence(spells);
-            List<Runnable> methods = new ArrayList<>();
-            methods.add(s::drain);
-            methods.add(s::shield);
-            methods.add(s::recharge);
-            methods.add(s::poison);
-            methods.add(s::missile);
-
+        for (int i = 0; i < 1000; i++) {  //1000 run to get the 900 result...
+            boss = new Boss(bossHit, bossDamage);
+            player = new Player();
+            spellContainer = new SpellContainer();
             do {
-                methods.get(combination.get(0)).run();
-                methods.get(combination.get(1)).run();
-                methods.get(combination.get(2)).run();
-                methods.get(combination.get(3)).run();
-                methods.get(combination.get(4)).run();
+                while (!attackChooser(new Random().nextInt(5), boss, player, spellContainer)) {
+                }
+                if (boss.isBossDead()) {
+                    break;
+                }
 
-            } while (s.spells.getPlayer().getHit() > 0 && s.spells.getBoss().getHit() > 0 && s.spells.getPlayer().getMana() > 53);
-            if (s.spells.isPlayerWins() && s.spells.spentMana < leastMana) {
-//                System.out.println("player hit: " + s.spells.getPlayer().getHit() + " mana: " + s.spells.getPlayer().getMana());
-//                System.out.println("boss hit: " + s.spells.getBoss().getHit());
-//                System.out.println("mana: " + s.spells.spentMana);
-                leastMana = s.spells.spentMana;
+                bossAttack(boss, player, spellContainer);
+
+            } while (!player.isPlayerDead() && !boss.isBossDead() && player.getMana() > 53);
+            if (player.getManaCost() < leastMana && boss.isBossDead()) {
+                leastMana = player.getManaCost();
             }
         }
         System.out.println("D22 - The minimal used mana to player wins: " + leastMana);
+
     }
 
-    static class Sequence {
-        Spells spells;
-
-        public Sequence(Spells spells) {
-            this.spells = spells;
-        }
-
-        public void drain() {
-            if (!spells.shouldBeContinue()) {
-                return;
-            }
-            if (spells.getPlayer().getMana() > 73 && spells.drain == 0) {
-                spells.castDrain();
-                spells.castSpells();
-                if (!spells.shouldBeContinue()) {
-                    return;
+    private boolean attackChooser(int choice, Boss boss, Player player, SpellContainer spellContainer) {
+        switch (choice) {
+            case 0 -> {
+                if (player.getMana() < 73) {
+                    return false;
                 }
-                spells.castBossAttack();
-                spells.castSpells();
             }
-        }
-
-        public void shield() {
-            if (!spells.shouldBeContinue()) {
-                return;
-            }
-            if (spells.getPlayer().getMana() > 113 && spells.shield == 0) {
-                spells.castShield();
-                spells.castSpells();
-                if (!spells.shouldBeContinue()) {
-                    return;
+            case 1 -> {
+                if (player.getMana() < 113 || (!spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Shield")).toList().isEmpty() && spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Shield")).toList().get(0).getTime() >= 1)) {
+                    return false;
                 }
-                spells.castBossAttack();
-                spells.castSpells();
+            }
+            case 2 -> {
+                if (player.getMana() < 229 || (!spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Recharge")).toList().isEmpty() && spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Recharge")).toList().get(0).getTime() >= 1)) {
+                    return false;
+                }
+            }
+            case 3 -> {
+                if (player.getMana() < 173 || (!spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Poison")).toList().isEmpty() && spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Poison")).toList().get(0).getTime() >= 1)) {
+                    return false;
+                }
+            }
+            case 4 -> {
+                if (player.getMana() < 53) {
+                    return false;
+                }
             }
         }
 
-        public void recharge() {
-            if (!spells.shouldBeContinue()) {
-                return;
-            }
-            if (spells.getPlayer().getMana() > 229 && spells.recharge == 0) {
-                spells.castRecharge();
-                spells.castSpells();
-                if (!spells.shouldBeContinue()) {
-                    return;
-                }
-                spells.castBossAttack();
-                spells.castSpells();
+        switch (choice) {
+            case 0 -> playerAttackDrain(boss, player, spellContainer);
+            case 1 -> playerAttackShield(boss, player, spellContainer);
+            case 2 -> playerAttackRecharge(boss, player, spellContainer);
+            case 3 -> playerAttackPoison(boss, player, spellContainer);
+            case 4 -> playerAttackMagicMissile(boss, player, spellContainer);
+        }
+        return true;
+    }
+
+    private void bossAttack(Boss boss, Player player, SpellContainer spellContainer) {
+        attack(boss, player, spellContainer, new BossAttack());
+    }
+
+    private void playerAttackMagicMissile(Boss boss, Player player, SpellContainer spellContainer) {
+        attack(boss, player, spellContainer, new MagicMissile());
+    }
+
+    private void playerAttackDrain(Boss boss, Player player, SpellContainer spellContainer) {
+        attack(boss, player, spellContainer, new Drain());
+    }
+
+    private void playerAttackPoison(Boss boss, Player player, SpellContainer spellContainer) {
+        attack(boss, player, spellContainer, new Poison());
+    }
+
+    private void playerAttackShield(Boss boss, Player player, SpellContainer spellContainer) {
+        attack(boss, player, spellContainer, new Shield());
+    }
+
+    private void playerAttackRecharge(Boss boss, Player player, SpellContainer spellContainer) {
+        attack(boss, player, spellContainer, new Recharge());
+    }
+
+    private void attack(Boss boss, Player player, SpellContainer spellContainer, Spell actualSpell) {
+
+        // check active spells
+        for (Spell spell : spellContainer.getActiveSpells()) {
+            if (spell.getCast() == action.TIMED) {
+                spell.effect(player, boss);
             }
         }
-
-        public void poison() {
-            if (!spells.shouldBeContinue()) {
-                return;
-            }
-            if (spells.getPlayer().getMana() > 173 && spells.poison == 0) {
-                spells.castPoison();
-                spells.castSpells();
-                if (!spells.shouldBeContinue()) {
-                    return;
+        if (boss.isBossDead() || player.isPlayerDead()) {
+            return;
+        }
+        // remove wore off spells
+        Collection<Spell> removeCandidates = new LinkedList<>();
+        for (Spell spell : spellContainer.getActiveSpells()) {
+            if (spell.getCast() == action.TIMED && spell.getTime() == 0) {
+                if (spell.getClass() == Shield.class) {
+                    player.setArmor(0);
                 }
-                spells.castBossAttack();
-                spells.castSpells();
-
+                removeCandidates.add(spell);
             }
         }
+        removeCandidates.forEach(spellContainer.getActiveSpells()::remove);
+        // cast spells (add list)
+        spellContainer.addSpell(actualSpell);
 
-        public void missile() {
-            if (!spells.shouldBeContinue()) {
-                return;
-            }
-            if (spells.getPlayer().getMana() > 53) {
-                spells.shouldBeContinue();
-                spells.castMagicMissile();
-                spells.castSpells();
-                if (!spells.shouldBeContinue()) {
-                    return;
+        // cast spells from list
+        removeCandidates.clear();
+        for (Spell spell : spellContainer.getActiveSpells()) {
+            if (spell.getCast() == action.INSTANT || spell.getCast() == null) {
+                spell.cast(player, boss);
+                if (spell.getCast() == action.INSTANT) {
+                    removeCandidates.add(spell);
                 }
-                spells.castBossAttack();
-                spells.castSpells();
             }
+        }
+        removeCandidates.forEach(spellContainer.getActiveSpells()::remove);
+    }
+
+    private static class SpellContainer {
+        Set<Spell> activeSpells = new HashSet<>();
+
+        public SpellContainer() {
+        }
+
+        public Set<Spell> getActiveSpells() {
+            return activeSpells;
+        }
+
+        public void addSpell(Spell spell) {
+            this.activeSpells.add(spell);
+        }
+
+    }
+
+    private interface Spell {
+        String getName();
+
+        void cast(Player player, Boss boss);
+
+        action getCast();
+
+        void effect(Player player, Boss boss);
+
+        int getTime();
+
+    }
+
+    private static class Recharge implements Spell {
+        String name = "Recharge";
+        action cast;
+        private int time = 6;
+        private final int cost = 229;
+
+        @Override
+        public action getCast() {
+            return cast;
+        }
+
+        @Override
+        public int getTime() {
+            return time;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public void cast(Player player, Boss boss) {
+            player.addManaCost(cost);
+            player.setMana(player.getMana() - cost);
+            cast = action.TIMED;
+        }
+
+        @Override
+        public void effect(Player player, Boss boss) {
+            player.setMana(player.getMana() + 101);
+            time--;
         }
     }
 
-    static class Spells {
-        Boss boss;
-        Player player;
-        int spentMana = 0;
-        int magicMissile = 0;
-        int drain = 0;
-        int bossAttack = 0;
-        int poison = 0;
-        int recharge = 0;
-        int shield = 0;
+    private static class Poison implements Spell {
+        String name = "Poison";
+        action cast;
+        private int time = 6;
+        private final int cost = 173;
 
-        public Spells(Boss boss, Player player) {
-            this.boss = boss;
-            this.player = player;
+        public Poison() {
         }
 
-        public Boss getBoss() {
-            return boss;
+        @Override
+        public action getCast() {
+            return cast;
         }
 
-        public Player getPlayer() {
-            return player;
+        @Override
+        public String getName() {
+            return name;
         }
 
-        public boolean shouldBeContinue() {
-            return getPlayer().getHit() > 0 && getBoss().getHit() > 0;
-
+        @Override
+        public void cast(Player player, Boss boss) {
+            player.addManaCost(cost);
+            player.setMana(player.getMana() - cost);
+            cast = action.TIMED;
         }
 
-        public boolean isPlayerWins() {
-            return player.getHit() > 0 && boss.getHit() <= 0;
+        @Override
+        public void effect(Player player, Boss boss) {
+            boss.setHit(boss.getHit() - 3);
+            time--;
         }
 
-        private void castSpells() {
-            if (magicMissile > 0) {
-                magicMissile();
-                magicMissile--;
-            }
-            if (drain > 0) {
-                drain();
-                drain--;
-            }
-            if (bossAttack > 0) {
-                bossAttack();
-                bossAttack--;
-            }
-            if (poison > 0) {
-                poison();
-                poison--;
-            }
-            if (recharge > 0) {
-                recharge();
-                recharge--;
-            }
-            if (shield == 0) {
-                player.setArmor(0);
+        @Override
+        public int getTime() {
+            return time;
+        }
+    }
 
-            }
-            if (shield > 0) {
-                shield();
-                shield--;
-            }
+    private static class Shield implements Spell {
+        String name = "Shield";
+        action cast;
+        private final int cost = 113;
+        private int time = 6;
+
+        public Shield() {
         }
 
-        private void castMagicMissile() {
-            player.setMana(player.getMana() - 53);
-            spentMana += 53;
-            magicMissile = 1;
+        @Override
+        public action getCast() {
+            return cast;
         }
 
-        private void castBossAttack() {
-            bossAttack = 1;
+        @Override
+        public int getTime() {
+            return time;
         }
 
-        private void castDrain() {
-            player.setMana(player.getMana() - 73);
-            spentMana += 73;
-            drain = 1;
+        @Override
+        public void effect(Player player, Boss boss) {
+            player.setArmor(7);
+            time--;
         }
 
-        private void castPoison() {
-            player.setMana(player.getMana() - 173);
-            spentMana += 173;
-            poison = 6;
+
+        @Override
+        public String getName() {
+            return name;
         }
 
-        private void castRecharge() {
-            player.setMana(player.getMana() - 229);
-            spentMana += 229;
-            recharge = 5;
+        @Override
+        public void cast(Player player, Boss boss) {
+            player.addManaCost(cost);
+            player.setMana(player.getMana() - cost);
+            cast = action.TIMED;
+        }
+    }
+
+    private static class BossAttack implements Spell {
+        String name = "BossAttack";
+        final action cast = action.INSTANT;
+
+        public BossAttack() {
         }
 
-        private void castShield() {
-            player.setMana(player.getMana() - 113);
-            spentMana += 113;
-            shield = 6;
+        @Override
+        public action getCast() {
+            return cast;
         }
 
-        private void bossAttack() {
+        @Override
+        public void effect(Player player, Boss boss) {
+        }
+
+        @Override
+        public int getTime() {
+            return 0;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public void cast(Player player, Boss boss) {
             if (boss.getDamage() - player.getArmor() > 0) {
                 player.setHit(player.getHit() - (boss.getDamage() - player.getArmor()));
             } else {
                 player.setHit(player.getHit() - 1);
             }
         }
+    }
 
-        private void magicMissile() {
-            boss.setHit(boss.getHit() - 4);
+    private static class Drain implements Spell {
+        String name = "Drain";
+        private final int cost = 73;
+        final action cast = action.INSTANT;
+
+        public Drain() {
         }
 
-        private void drain() {
+        @Override
+        public action getCast() {
+            return cast;
+        }
+
+        @Override
+        public void effect(Player player, Boss boss) {
+        }
+
+        @Override
+        public int getTime() {
+            return 0;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public void cast(Player player, Boss boss) {
+            player.addManaCost(cost);
+            player.setMana(player.getMana() - cost);
             boss.setHit(boss.getHit() - 2);
             player.setHit(player.getHit() + 2);
         }
 
-        private void poison() {
-            boss.setHit(boss.getHit() - 3);
+    }
+
+    private static class MagicMissile implements Spell {
+        String name = "MagicMissile";
+        private final int cost = 53;
+        private final action cast = action.INSTANT;
+
+        public MagicMissile() {
         }
 
-        private void recharge() {
-            player.setMana(player.getMana() + 101);
+        @Override
+        public action getCast() {
+            return cast;
         }
 
-        private void shield() {
-            player.setArmor(7);
+        @Override
+        public void effect(Player player, Boss boss) {
+
+        }
+
+        @Override
+        public int getTime() {
+            return 0;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public void cast(Player player, Boss boss) {
+            player.addManaCost(cost);
+            player.setMana(player.getMana() - cost);
+            boss.setHit(boss.getHit() - 4);
         }
     }
 
@@ -277,8 +408,17 @@ public class Day22 {
         int hit = 50;
         int mana = 500;
         int armor = 0;
+        int manaCost = 0;
 
         public Player() {
+        }
+
+        public int getManaCost() {
+            return manaCost;
+        }
+
+        public void addManaCost(int manaCost) {
+            this.manaCost += manaCost;
         }
 
         public int getArmor() {
@@ -304,6 +444,10 @@ public class Day22 {
         public void setMana(int mana) {
             this.mana = mana;
         }
+
+        public boolean isPlayerDead() {
+            return hit <= 0;
+        }
     }
 
     private static class Boss {
@@ -326,29 +470,10 @@ public class Day22 {
         public void setHit(int hit) {
             this.hit = hit;
         }
-    }
 
-    public static List<List<Integer>> permute(int[] nums) {
-        List<List<Integer>> result = new ArrayList<>();
-        Permutation(0, nums, result);
-        return result;
-    }
-
-    private static void Permutation(int i, int[] nums, List<List<Integer>> result) {
-        if (i == nums.length - 1) {
-            List<Integer> list = new ArrayList<>();
-            for (int n : nums) list.add(n);
-            result.add(list);
-        } else {
-            for (int j = i, l = nums.length; j < l; j++) {
-                int temp = nums[j];
-                nums[j] = nums[i];
-                nums[i] = temp;
-                Permutation(i + 1, nums, result);
-                temp = nums[j];
-                nums[j] = nums[i];
-                nums[i] = temp;
-            }
+        public boolean isBossDead() {
+            return hit <= 0;
         }
     }
+
 }
