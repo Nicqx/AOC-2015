@@ -6,27 +6,30 @@ import java.util.Scanner;
 
 public class Day1 {
     private static int coord = 0;
-    private static String text;
 
     public Day1() {
-        try (Scanner scanner = new Scanner(new File("resources/D1/input"))) {
+        System.out.println("D1 - Santa goes to floor: " + process(fileReader("resources/D1/input")));
+        System.out.println("D1/2 - Santa enters to the basement at: " + coord);
+    }
+
+    private String fileReader(String res) {
+        String text = "";
+        try (Scanner scanner = new Scanner(new File(res))) {
             while (scanner.hasNext()) {
-                System.out.println("D1 - Santa goes to floor: " + process(scanner.nextLine()));
-                System.out.println("D1/2 - Santa enters to the basement at: " + coord);
+                text = scanner.nextLine();
             }
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
+        return text;
     }
 
     private static int process(String text) {
-        Day1.text = text;
         int result = 0;
         for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) == '(') {
-                result++;
-            } else if (text.charAt(i) == ')') {
-                result--;
+            switch (text.charAt(i)) {
+                case '(' -> result++;
+                case ')' -> result--;
             }
             if (coord == 0 && result < 0) {
                 coord = i + 1;
