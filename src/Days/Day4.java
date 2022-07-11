@@ -9,29 +9,26 @@ import java.util.Scanner;
 public class Day4 {
 
     public Day4() {
-        try (Scanner scanner = new Scanner(new File("resources/D4/input"))) {
-            while (scanner.hasNext()) {
-                String text = scanner.nextLine();
-                System.out.println("D4 - Your answer is: " + process(text));
-                System.out.println("D4/2 - Your second answer is: " + process2(text));
-            }
+        String text = fileReader("resources/D4/input");
+        System.out.println("D4 - Your answer is: " + genPass(text, "00000"));
+        System.out.println("D4/2 - Your second answer is: " + genPass(text, "000000"));
+    }
 
+    private String fileReader(String res) {
+        String result = "";
+        try (Scanner scanner = new Scanner(new File(res))) {
+            while (scanner.hasNext()) {
+                result = scanner.nextLine();
+            }
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
+        return result;
     }
 
-    private static int process2(String text) {
+    private static int genPass(String text, String match) {
         int answer = 0;
-        while (!hashMD5(text + answer).startsWith("000000")) {
-            answer++;
-        }
-        return answer;
-    }
-
-    private static int process(String text) {
-        int answer = 0;
-        while (!hashMD5(text + answer).startsWith("00000")) {
+        while (!hashMD5(text + answer).startsWith(match)) {
             answer++;
         }
         return answer;
