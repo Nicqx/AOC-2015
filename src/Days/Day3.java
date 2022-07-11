@@ -7,84 +7,103 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class Day3 {
-    private static final Set<String> coords1 = new HashSet<>();
-    private static final Set<String> coords2 = new HashSet<>();
 
     public Day3() {
-        try (Scanner scanner = new Scanner(new File("resources/D3/input"))) {
+        String text = fileReader("resources/D3/input");
+        System.out.println("D3 - These amount of houses was visited by Santa at least once: " + processRoute(text));
+        System.out.println("D3/2 - These amount of houses was visited with Robo-Santa at least once: " + processRouteWithRoboSanta(text));
+    }
+
+    private String fileReader(String res) {
+        String result = "";
+        try (Scanner scanner = new Scanner(new File(res))) {
             while (scanner.hasNext()) {
-                String text = scanner.nextLine();
-                System.out.println("D3 - These amount of houses was visited by Santa at least once: " + process1(text));
-                System.out.println("D3/2 - These amount of houses was visited with Robo-Santa at least once: " + process2(text));
+                result = scanner.nextLine();
             }
 
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
+        return result;
     }
 
-    private static int process1(String text) {
+    private static int processRoute(String text) {
+        Set<String> coords = new HashSet<>();
         int x = 0;
         int y = 0;
-        Day3.coords1.add("0;0");
+        coords.add("0;0");
         for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) == '^') {
-                x++;
-                Day3.coords1.add(x + ";" + y);
-            } else if (text.charAt(i) == '>') {
-                y++;
-                Day3.coords1.add(x + ";" + y);
-            } else if (text.charAt(i) == '<') {
-                y--;
-                Day3.coords1.add(x + ";" + y);
-            } else if (text.charAt(i) == 'v') {
-                x--;
-                Day3.coords1.add(x + ";" + y);
+            switch (text.charAt(i)) {
+                case '^' -> {
+                    x++;
+                    coords.add(x + ";" + y);
+                }
+                case '>' -> {
+                    y++;
+                    coords.add(x + ";" + y);
+                }
+                case '<' -> {
+                    y--;
+                    coords.add(x + ";" + y);
+                }
+                case 'v' -> {
+                    x--;
+                    coords.add(x + ";" + y);
+                }
             }
-
         }
-        return Day3.coords1.size();
-
+        return coords.size();
     }
 
-    private static int process2(String text) {
+    private static int processRouteWithRoboSanta(String text) {
+        Set<String> coords = new HashSet<>();
+
         int Sx = 0;
         int Sy = 0;
         int Rx = 0;
         int Ry = 0;
-        Day3.coords2.add("0;0");
+        coords.add("0;0");
         for (int i = 0; i < text.length(); i++) {
             if (i % 2 == 0) {
-                if (text.charAt(i) == '^') {
-                    Sx++;
-                    Day3.coords2.add(Sx + ";" + Sy);
-                } else if (text.charAt(i) == '>') {
-                    Sy++;
-                    Day3.coords2.add(Sx + ";" + Sy);
-                } else if (text.charAt(i) == '<') {
-                    Sy--;
-                    Day3.coords2.add(Sx + ";" + Sy);
-                } else if (text.charAt(i) == 'v') {
-                    Sx--;
-                    Day3.coords2.add(Sx + ";" + Sy);
+                switch (text.charAt(i)) {
+                    case '^' -> {
+                        Sx++;
+                        coords.add(Sx + ";" + Sy);
+                    }
+                    case '<' -> {
+                        Sy--;
+                        coords.add(Sx + ";" + Sy);
+                    }
+                    case '>' -> {
+                        Sy++;
+                        coords.add(Sx + ";" + Sy);
+                    }
+                    case 'v' -> {
+                        Sx--;
+                        coords.add(Sx + ";" + Sy);
+                    }
                 }
             } else {
-                if (text.charAt(i) == '^') {
-                    Rx++;
-                    Day3.coords2.add(Rx + ";" + Ry);
-                } else if (text.charAt(i) == '>') {
-                    Ry++;
-                    Day3.coords2.add(Rx + ";" + Ry);
-                } else if (text.charAt(i) == '<') {
-                    Ry--;
-                    Day3.coords2.add(Rx + ";" + Ry);
-                } else if (text.charAt(i) == 'v') {
-                    Rx--;
-                    Day3.coords2.add(Rx + ";" + Ry);
+                switch (text.charAt(i)){
+                    case  '^'->{
+                        Rx++;
+                        coords.add(Rx + ";" + Ry);
+                    }
+                    case '>'->{
+                        Ry++;
+                        coords.add(Rx + ";" + Ry);
+                    }
+                    case '<' ->{
+                        Ry--;
+                        coords.add(Rx + ";" + Ry);
+                    }
+                    case 'v'->{
+                        Rx--;
+                        coords.add(Rx + ";" + Ry);
+                    }
                 }
             }
         }
-        return Day3.coords2.size();
-
+        return coords.size();
     }
 }
