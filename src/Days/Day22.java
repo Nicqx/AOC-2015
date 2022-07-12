@@ -9,10 +9,99 @@ import java.util.regex.Pattern;
 public class Day22 {
     enum action {INSTANT, TIMED}
 
+    int bossHit = 0;
+    int bossDamage = 0;
+    Boss boss;
+    Player player;
+    SpellContainer spellContainer;
+
     public Day22() {
-        int bossHit = 0;
-        int bossDamage = 0;
-        try (Scanner scanner = new Scanner(new File("resources/D22/input"))) {
+        fileReader("resources/D22/input");
+
+        System.out.println("D22 - The minimal used mana to player wins: " + findLeastMana(false, 1000));
+        ////////-----comment for manual casting
+//        int leastMana = manualFight();
+        //////----comment for automate
+        int leastMana = findLeastMana(true, 100000);
+        //////// ----comment end
+        System.out.println("D22/2 - The minimal used mana with Hard difficulty to player wins: " + leastMana);
+
+    }
+
+    private int manualFight() {
+        int leastMana = Integer.MAX_VALUE;
+        boss = new Boss(bossHit, bossDamage);
+        while (!boss.isBossDead()) {
+            System.out.println("---New Round---");
+            boss = new Boss(bossHit, bossDamage);
+            player = new Player();
+            spellContainer = new SpellContainer();
+            do {
+                System.out.println("---------");
+                System.out.println("boss hit: " + boss.getHit());
+                System.out.println("player hit: " + player.getHit() + " mana: " + player.getMana());
+                if (!spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Shield")).toList().isEmpty()) {
+                    System.out.println("Shield is active for: " + spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Shield")).toList().get(0).getTime());
+                }
+                if (!spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Recharge")).toList().isEmpty()) {
+                    System.out.println("Recharge is active for: " + spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Recharge")).toList().get(0).getTime());
+                }
+                if (!spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Poison")).toList().isEmpty()) {
+                    System.out.println("Poison is active for: " + spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Poison")).toList().get(0).getTime());
+                }
+
+                System.out.println("0-Drain(cost 73 hit 2 heal 2), 1-Shield(cost 113 armor 7), 2-Recharge(cost 229 mana+ 101), 3-Poison(cost 173 damage 3), 4-MagicMissile(cost 53, hit 4), 5-Skipp: ");
+                Scanner attack = new Scanner(System.in);
+                attackChooser(attack.nextInt(), boss, player, spellContainer);
+
+                bossAttack(boss, player, spellContainer);
+
+            } while (!player.isPlayerDead() && !boss.isBossDead());
+            if (player.getManaCost() < leastMana && boss.isBossDead()) {
+                leastMana = player.getManaCost();
+            }
+        }
+
+        return leastMana;
+    }
+
+    private int findLeastMana(boolean isDifficultyHard, int rematchCounter) {
+        int leastMana = Integer.MAX_VALUE;
+        for (int i = 0; i < rematchCounter; i++) {  //1000 run to get the 900 result... and 100000 run to get the 1216 result with hard...
+            boss = new Boss(bossHit, bossDamage);
+            player = new Player();
+            spellContainer = new SpellContainer();
+            do {
+                if (isDifficultyHard) {
+                    player.setHit(player.getHit() - 1);
+                    if (player.isPlayerDead()) {
+                        break;
+                    }
+                }
+                while (!attackChooser(new Random().nextInt(5), boss, player, spellContainer)) {
+                    if (player.getMana() < 53 && testIfRechargeActive(spellContainer)) {
+                        attackChooser(5, boss, player, spellContainer);
+                    } else if (player.getMana() < 53 && !testIfRechargeActive(spellContainer)) {
+                        break;
+
+                    }
+                }
+                if (boss.isBossDead()) {
+                    break;
+                }
+
+                bossAttack(boss, player, spellContainer);
+
+            } while (!player.isPlayerDead() && !boss.isBossDead());
+            if (player.getManaCost() < leastMana && boss.isBossDead()) {
+                leastMana = player.getManaCost();
+            }
+        }
+        return leastMana;
+    }
+
+    private void fileReader(String res) {
+        try (Scanner scanner = new Scanner(new File(res))) {
             while (scanner.hasNext()) {
                 Matcher matcher = Pattern.compile("Hit Points: (\\d+)").matcher(scanner.nextLine());
                 if (matcher.find()) {
@@ -27,106 +116,6 @@ public class Day22 {
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
-        Boss boss;
-        Player player;
-        SpellContainer spellContainer;
-        int leastMana = Integer.MAX_VALUE;
-        for (int i = 0; i < 1000; i++) {  //1000 run to get the 900 result...
-            boss = new Boss(bossHit, bossDamage);
-            player = new Player();
-            spellContainer = new SpellContainer();
-            do {
-                while (!attackChooser(new Random().nextInt(5), boss, player, spellContainer)) {
-                    if (player.getMana() < 53 && testIfRechargeActive(spellContainer)) {
-                        attackChooser(5, boss, player, spellContainer);
-                    } else if (player.getMana() < 53 && !testIfRechargeActive(spellContainer)) {
-                        break;
-
-                    }
-                }
-                if (boss.isBossDead()) {
-                    break;
-                }
-
-                bossAttack(boss, player, spellContainer);
-
-            } while (!player.isPlayerDead() && !boss.isBossDead());
-            if (player.getManaCost() < leastMana && boss.isBossDead()) {
-                leastMana = player.getManaCost();
-            }
-        }
-        System.out.println("D22 - The minimal used mana to player wins: " + leastMana);
-        leastMana = Integer.MAX_VALUE;
-        ////////-----comment for manual casting
-//
-//            boss = new Boss(bossHit, bossDamage);
-//            while (!boss.isBossDead()) {
-//                System.out.println("---New Round---");
-//                boss = new Boss(bossHit, bossDamage);
-//                player = new Player();
-//                spellContainer = new SpellContainer();
-//                do {
-//                    System.out.println("---------");
-//                    System.out.println("boss hit: " + boss.getHit());
-//                    System.out.println("player hit: " + player.getHit() + " mana: " + player.getMana());
-//                    if (!spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Shield")).toList().isEmpty()) {
-//                        System.out.println("Shield is active for: " + spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Shield")).toList().get(0).getTime());
-//                    }
-//                    if (!spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Recharge")).toList().isEmpty()) {
-//                        System.out.println("Recharge is active for: " + spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Recharge")).toList().get(0).getTime());
-//                    }
-//                    if (!spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Poison")).toList().isEmpty()) {
-//                        System.out.println("Poison is active for: " + spellContainer.getActiveSpells().stream().filter(s -> s.getName().equals("Poison")).toList().get(0).getTime());
-//                    }
-//
-//                    System.out.println("0-Drain(cost 73 hit 2 heal 2), 1-Shield(cost 113 armor 7), 2-Recharge(cost 229 mana+ 101), 3-Poison(cost 173 damage 3), 4-MagicMissile(cost 53, hit 4), 5-Skipp: ");
-//                    Scanner attack = new Scanner(System.in);
-//                    attackChooser(attack.nextInt(), boss, player, spellContainer);
-//
-//                    bossAttack(boss, player, spellContainer);
-//
-//                } while (!player.isPlayerDead() && !boss.isBossDead());
-//                if (player.getManaCost() < leastMana && boss.isBossDead()) {
-//                    leastMana = player.getManaCost();
-//                }
-//            }
-//
-//        System.out.println("D22 - The minimal used mana to player wins: " + leastMana);
-        //////----comment for automate
-        for (int i = 0; i < 100000; i++) { //1000000 run to get the 1216 result...
-            boss = new Boss(bossHit, bossDamage);
-            player = new Player();
-            spellContainer = new SpellContainer();
-            do {
-                player.setHit(player.getHit() - 1);
-                if (player.isPlayerDead()) {
-                    break;
-                }
-                while (!attackChooser(new Random().nextInt(5), boss, player, spellContainer)) {
-                    if (player.getMana() < 53 && testIfRechargeActive(spellContainer)) {
-                        attackChooser(5, boss, player, spellContainer);
-                    } else if (player.getMana() < 53 && !testIfRechargeActive(spellContainer)) {
-                        break;
-
-                    }
-                }
-
-                if (boss.isBossDead()) {
-                    break;
-                }
-                if (player.isPlayerDead()) {
-                    break;
-                }
-                bossAttack(boss, player, spellContainer);
-
-            } while (!player.isPlayerDead() && !boss.isBossDead());
-            if (player.getManaCost() < leastMana && boss.isBossDead()) {
-                leastMana = player.getManaCost();
-            }
-        }
-        System.out.println("D22/2 - The minimal used mana with Hard difficulty to player wins: " + leastMana);
-//////// ----comment end
-
     }
 
     private boolean testIfRechargeActive(SpellContainer spellContainer) {
