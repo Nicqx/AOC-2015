@@ -12,12 +12,20 @@ public class Day21 {
     static Map<Integer, Weapon> weaponShop = new HashMap<>();
     static Map<Integer, Armor> armorShop = new HashMap<>();
     static Map<Integer, Ring> ringShop = new HashMap<>();
+    int bossHit;
+    int bossDamage;
+    int bossArmor;
 
     public Day21() {
-        int bossHit = 0;
-        int bossDamage = 0;
-        int bossArmor = 0;
-        try (Scanner scanner = new Scanner(new File("resources/D21/input"))) {
+
+        fileReader("resources/D21/input");
+        initShop();
+        System.out.println("D21 - The minimal cost when player is win: " + genFightMinimalCost(bossHit, bossDamage, bossArmor));
+        System.out.println("D21/2 - The maximal cost when player is lose: " + genFightMaximalLosingCost(bossHit, bossDamage, bossArmor));
+    }
+
+    private void fileReader(String res) {
+        try (Scanner scanner = new Scanner(new File(res))) {
             while (scanner.hasNext()) {
                 Matcher matcher = Pattern.compile("Hit Points: (\\d+)").matcher(scanner.nextLine());
                 if (matcher.find()) {
@@ -36,9 +44,6 @@ public class Day21 {
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
-        initShop();
-        System.out.println("D21 - The minimal cost when player is win: " + genFightMinimalCost(bossHit, bossDamage, bossArmor));
-        System.out.println("D21/2 - The maximal cost when player is lose: " + genFightMaximalLosingCost(bossHit, bossDamage, bossArmor));
     }
 
     private int genFightMinimalCost(int bossHit, int bossDamage, int bossArmor) {
