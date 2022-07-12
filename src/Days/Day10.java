@@ -14,26 +14,24 @@ public class Day10 {
     int nextIterations = 50;
 
     public Day10() {
-        try (Scanner scanner = new Scanner(new File("resources/D10/input"))) {
-            while (scanner.hasNext()) {
-                String process = process(scanner.nextLine(), iterations);
-                System.out.println("D10 - the length of the string after " + iterations + " iteration(s) is: " + process.length());
-            }
+        String file = fileReader("resources/D10/input");
+        System.out.println("D10 - the length of the string after " + iterations + " iteration(s) is: " + process(file, iterations).length());
 
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
-        try (Scanner scanner = new Scanner(new File("resources/D10/input"))) {
-            while (scanner.hasNext()) {
-                String process = process(scanner.nextLine(), nextIterations);
-                System.out.println("D10/2 - the length of the string after " + nextIterations + " iteration(s) is: " + process.length());
-            }
-
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
+        System.out.println("D10/2 - the length of the string after " + nextIterations + " iteration(s) is: " + process(file, nextIterations).length());
     }
 
+    private String fileReader(String res) {
+        String result = "";
+        try (Scanner scanner = new Scanner(new File(res))) {
+            while (scanner.hasNext()) {
+                result = scanner.nextLine();
+            }
+
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        }
+        return result;
+    }
 
     private String process(String text, int iterations) {
         String mainResult = text;
