@@ -12,7 +12,16 @@ public class Day13 {
     ArrayList<String> namesPermutationList = new ArrayList<>();
 
     public Day13() {
-        try (Scanner scanner = new Scanner(new File("resources/D13/input"))) {
+        fileReader("resources/D13/input");
+        System.out.println("D13 - the happiest value is: " + calcMaxHappiness());
+
+        namesPermutationList.clear();
+        addMyself();
+        System.out.println("D13/2 - the happiest value with me is: " + calcMaxHappiness());
+    }
+
+    private void fileReader(String res) {
+        try (Scanner scanner = new Scanner(new File(res))) {
             while (scanner.hasNext()) {
                 String input = scanner.nextLine();
                 Matcher matcher = Pattern.compile("(\\w+) would gain (\\d+) happiness units by sitting next to (\\w+).").matcher(input);
@@ -28,38 +37,23 @@ public class Day13 {
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
+    }
+
+    private int calcMaxHappiness() {
+        int result = 0;
         createPersonsSet();
         int n = namesSet.size();
         String[] arr = new String[n];
         String[] nameArray = namesSet.toArray(arr);
         permute(Arrays.asList(nameArray), 0);
-        int maxHappiness = 0;
         for (String string : namesPermutationList) {
             String tmp = string.replace("[", "").replace("]", "").replace(" ", "");
             tmp = tmp + "," + tmp.split(",")[0];
-            if (calculateHappiness(tmp.split(",")) > maxHappiness) {
-                maxHappiness = calculateHappiness(tmp.split(","));
+            if (calculateHappiness(tmp.split(",")) > result) {
+                result = calculateHappiness(tmp.split(","));
             }
         }
-        System.out.println("D13 - the happiest value is: " + maxHappiness);
-        namesPermutationList.clear();
-        addMyself();
-        createPersonsSet();
-        n = namesSet.size();
-        arr = new String[n];
-        nameArray = namesSet.toArray(arr);
-        permute(Arrays.asList(nameArray), 0);
-        maxHappiness = 0;
-        for (String string : namesPermutationList) {
-            String tmp = string.replace("[", "").replace("]", "").replace(" ", "");
-            tmp = tmp + "," + tmp.split(",")[0];
-            if (calculateHappiness(tmp.split(",")) > maxHappiness) {
-                maxHappiness = calculateHappiness(tmp.split(","));
-            }
-        }
-        System.out.println("D13/2 - the happiest value with me is: " + maxHappiness);
-
-
+        return result;
     }
 
     private void addMyself() {
