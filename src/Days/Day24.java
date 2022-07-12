@@ -11,7 +11,16 @@ public class Day24 {
     int sum;
 
     public Day24() {
-        try (Scanner scanner = new Scanner(new File("resources/D24/input"))) {
+        fileReader("resources/D24/input");
+        sum = numbers.stream().mapToInt(Integer::intValue).sum();
+        generateVariations(3);
+        System.out.println("D24 - the QE for the first group: " + minimalQEinMinimalPiece());
+        generateVariations(4);
+        System.out.println("D24/2 - the QE for the first group with 4 place: " + minimalQEinMinimalPiece());
+    }
+
+    private void fileReader(String res) {
+        try (Scanner scanner = new Scanner(new File(res))) {
             while (scanner.hasNext()) {
                 numbers.add(Integer.parseInt(scanner.nextLine()));
             }
@@ -19,11 +28,6 @@ public class Day24 {
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
-        sum = numbers.stream().mapToInt(Integer::intValue).sum();
-        generateVariations(3);
-        System.out.println("D24 - the QE for the first group: " + minimalQEinMinimalPiece());
-        generateVariations(4);
-        System.out.println("D24/2 - the QE for the first group with 4 place: " + minimalQEinMinimalPiece());
     }
 
     private long minimalQEinMinimalPiece() {
@@ -50,8 +54,6 @@ public class Day24 {
                 }
             }
         }
-
-
         return minQE;
     }
 
@@ -68,18 +70,19 @@ public class Day24 {
                                              int[] Empty_Array, int x, ArrayList<ArrayList<Integer>> variations, int sum, int div) {
         ArrayList<Integer> localList = new ArrayList<>();
         if (Array_Index == Length) {
-            for (int y = 0; y < Length; y++)
+            for (int y = 0; y < Length; y++) {
                 localList.add(Empty_Array[y]);
+            }
 
             if (localList.stream().mapToInt(Integer::intValue).sum() == sum / div) {
                 variations.add(localList);
             }
-
             return;
         }
 
-        if (x >= n)
+        if (x >= n) {
             return;
+        }
 
         Empty_Array[Array_Index] = Input_Array[x];
         PossibleCombinations(Input_Array, n, Length, Array_Index + 1, Empty_Array, x + 1, variations, sum, div);
