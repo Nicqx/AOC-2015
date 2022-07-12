@@ -7,24 +7,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day25 {
-        long start = 20151125;
+    long start = 20151125;
+    int reqXCoord;
+    int reqYCoord;
 
     public Day25() {
+        fileReader("resources/D25/input");
+
+        System.out.println("D25 - the code in x:" + reqXCoord + ", and y:" + reqYCoord + ", val: " + calculateCode(start));
+    }
+
+    private long calculateCode(long start) {
         int x = 0;
         int y;
-        int reqXCoord = 0;
-        int reqYCoord = 0;
-        try (Scanner scanner = new Scanner(new File("resources/D25/input"))) {
-            while (scanner.hasNext()) {
-                Matcher matcher = Pattern.compile("To continue, please consult the code grid in the manual\\.  Enter the code at row (\\d+), column (\\d+)\\.").matcher(scanner.nextLine());
-                if (matcher.find()) {
-                    reqXCoord = Integer.parseInt(matcher.group(2));
-                    reqYCoord = Integer.parseInt(matcher.group(1));
-                }
-            }
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
         boolean notFound = true;
         int counter = 2;
         do {
@@ -46,7 +41,21 @@ public class Day25 {
             }
             counter++;
         } while (notFound);
-        System.out.println("D25 - the code in x:" + reqXCoord + ", and y:" + reqYCoord + ", val: " + start);
+        return start;
+    }
+
+    private void fileReader(String res) {
+        try (Scanner scanner = new Scanner(new File(res))) {
+            while (scanner.hasNext()) {
+                Matcher matcher = Pattern.compile("To continue, please consult the code grid in the manual\\.  Enter the code at row (\\d+), column (\\d+)\\.").matcher(scanner.nextLine());
+                if (matcher.find()) {
+                    reqXCoord = Integer.parseInt(matcher.group(2));
+                    reqYCoord = Integer.parseInt(matcher.group(1));
+                }
+            }
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        }
     }
 
     private long genNext(long val) {
