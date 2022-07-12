@@ -14,35 +14,31 @@ public class Day7 {
     String bOutput;
 
     public Day7() {
-        try (Scanner scanner = new Scanner(new File("resources/D7/input"))) {
-            while (scanner.hasNext()) {
-                String text = scanner.nextLine();
-                process_input(text, bOutput);
-            }
-
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
+        fileReader("resources/D7/input");
         while (resolveDirect() || replaceResolved() || resolveOpr()) {
         }
-
         String checkFor = "a";
         System.out.println("D7 - The value of " + checkFor + " : " + nodes.get(checkFor));
+
         bOutput = nodes.get(checkFor);
         nodes.clear();
-        try (Scanner scanner = new Scanner(new File("resources/D7/input"))) {
-            while (scanner.hasNext()) {
-                String text = scanner.nextLine();
-                process_input(text, bOutput);
-            }
-
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
+        fileReader("resources/D7/input");
         while (resolveDirect() || replaceResolved() || resolveOpr()) {
         }
         System.out.println("D7/2 - The value of " + checkFor + " : " + nodes.get(checkFor));
 
+    }
+
+    private void fileReader(String res) {
+        try (Scanner scanner = new Scanner(new File(res))) {
+            while (scanner.hasNext()) {
+                String text = scanner.nextLine();
+                process_input(text, bOutput);
+            }
+
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        }
     }
 
     private boolean isResolved(String val) {
