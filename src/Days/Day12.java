@@ -9,25 +9,21 @@ import java.util.regex.Pattern;
 
 public class Day12 {
     public Day12() {
-        int sum = 0;
-        try (Scanner scanner = new Scanner(new File("resources/D12/input"))) {
-            while (scanner.hasNext()) {
-                sum = sumNum(scanner.nextLine());
-            }
-            System.out.println("D12 - the sum of all numbers: " + sum);
+        String file = fileReader("resources/D12/input");
+        System.out.println("D12 - the sum of all numbers: " + sumNum(file));
+        System.out.println("D12/2 - the sum of all numbers without red: " + sumNum(omitRed(file)));
+    }
 
+    private String fileReader(String res) {
+        String result = "";
+        try (Scanner scanner = new Scanner(new File(res))) {
+            while (scanner.hasNext()) {
+                result = scanner.nextLine();
+            }
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
-        try (Scanner scanner = new Scanner(new File("resources/D12/input"))) {
-            while (scanner.hasNext()) {
-                sum = sumNum(omitRed(scanner.nextLine()));
-            }
-            System.out.println("D12/2 - the sum of all numbers without red: " + sum);
-
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
+        return result;
     }
 
     private String omitRed(String text) {
