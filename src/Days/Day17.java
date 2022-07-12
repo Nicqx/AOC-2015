@@ -11,17 +11,20 @@ public class Day17 {
     ArrayList<ArrayList<Integer>> variations = new ArrayList<>();
 
     public Day17() {
-        try (Scanner scanner = new Scanner(new File("resources/D17/input"))) {
+        fileReader("resources/D17/input");
+        generateVariations();
+        System.out.println("D17 - The possible variations to store all eggnog: " + getValidVariations());
+        System.out.println("D17/2 - The possible different variations to store all eggnog: " + getMinimalValidVariations());
+
+    }
+    private void fileReader(String res) {
+        try (Scanner scanner = new Scanner(new File(res))) {
             while (scanner.hasNext()) {
                 containers.add(Integer.parseInt(scanner.nextLine()));
             }
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
-        generateVariations();
-        System.out.println("D17 - The possible variations to store all eggnog: " + getValidVariations());
-        System.out.println("D17/2 - The possible different variations to store all eggnog: " + getMinimalValidVariations());
-
     }
 
     private int getMinimalValidVariations() {
