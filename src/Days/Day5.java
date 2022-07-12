@@ -5,28 +5,35 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Day5 {
+    int counter_old = 0;
+    int counter_new = 0;
+
     public Day5() {
-        try (Scanner scanner = new Scanner(new File("resources/D5/input"))) {
-            int counter_old = 0;
-            int counter_new = 0;
+        fileReader("resources/D5/input");
+        System.out.println("D5 - The counter of nice strings with old rule is: " + counter_old);
+        System.out.println("D5/2 - The counter of nice strings with new rule is: " + counter_new);
+
+
+    }
+
+    private void fileReader(String res) {
+        try (Scanner scanner = new Scanner(new File(res))) {
+
             while (scanner.hasNext()) {
                 String text = scanner.nextLine();
                 if (process_old(text)) {
                     counter_old++;
                 }
-                if (process_new(text)){
+                if (process_new(text)) {
                     counter_new++;
                 }
             }
-            System.out.println("D5 - The counter of nice strings with old rule is: " + counter_old);
-            System.out.println("D5/2 - The counter of nice strings with new rule is: " + counter_new);
-
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
     }
 
-    private static boolean process_new(String text){
+    private static boolean process_new(String text) {
         return (repeatingPairsWOOverlapping(text) && repeatBetweenOne(text));
     }
 
@@ -34,7 +41,7 @@ public class Day5 {
         return (restrictedGroups(text) && doubleLetter(text) && atLeastThreeVowel(text));
     }
 
-    private static boolean repeatingPairsWOOverlapping(String text){
+    private static boolean repeatingPairsWOOverlapping(String text) {
         char movingA = text.charAt(0);
         char movingB = text.charAt(1);
         boolean res = false;
@@ -51,9 +58,9 @@ public class Day5 {
         return res;
     }
 
-    private static boolean repeatBetweenOne(String text){
+    private static boolean repeatBetweenOne(String text) {
         boolean res = false;
-        for (int i = 0; i < text.length() - 2; i++){
+        for (int i = 0; i < text.length() - 2; i++) {
             if (text.charAt(i) == text.charAt(i + 2)) {
                 res = true;
                 break;
