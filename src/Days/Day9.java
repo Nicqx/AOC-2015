@@ -10,26 +10,36 @@ public class Day9 {
     ArrayList<Distances> distanceMatrix = new ArrayList<>();
     Set<String> citiesSet = new HashSet<>();
     static ArrayList<String> citiesPermutationList = new ArrayList<>();
+    int minDistance = Integer.MAX_VALUE;
+    int maxDistance = Integer.MIN_VALUE;
 
     public Day9() {
-        try (Scanner scanner = new Scanner(new File("resources/D9/input"))) {
+        fileReader("resources/D9/input");
+        createCitiesSet();
+        calculateDistances();
+        System.out.println("D9 - the shortest distance is: " + minDistance);
+        System.out.println("D9/2 - the longest distance is: " + maxDistance);
+    }
+
+    private void fileReader(String res) {
+        try (Scanner scanner = new Scanner(new File(res))) {
             while (scanner.hasNext()) {
                 Matcher matcher = Pattern.compile("(\\w+) to (\\w+) = (\\d+)").matcher(scanner.nextLine());
                 if (matcher.find()) {
                     distanceMatrix.add(new Distances(matcher.group(1), matcher.group(2), Integer.parseInt(matcher.group(3))));
                 }
             }
-
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
-        createCitiesSet();
+    }
+
+    private void calculateDistances() {
         int n = citiesSet.size();
         String[] arr = new String[n];
         String[] cityArray = citiesSet.toArray(arr);
         permute(Arrays.asList(cityArray), 0);
-        int minDistance = Integer.MAX_VALUE;
-        int maxDistance = 0;
+
         for (String string : citiesPermutationList) {
             String tmp = string.replace("[", "").replace("]", "").replace(" ", "");
             if (calculateRoute(tmp.split(",")) < minDistance) {
@@ -39,10 +49,6 @@ public class Day9 {
                 maxDistance = calculateRoute(tmp.split(","));
             }
         }
-        System.out.println("D9 - the shortest distance is: " + minDistance);
-        System.out.println("D9/2 - the longest distance is: " + maxDistance);
-
-
     }
 
     private int calculateRoute(String[] a) {
