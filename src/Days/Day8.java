@@ -13,20 +13,23 @@ public class Day8 {
     ArrayList<Integer> newCharString = new ArrayList<>();
 
     public Day8() {
-        try (Scanner scanner = new Scanner(new File("resources/D8/input"))) {
+        fileReader("resources/D8/input");
+        createCharString();
+        System.out.println("D8 - the needed amount of memory " + counterVal());
+        createNewFullString();
+        System.out.println("D8/2 - the needed amount of memory with the new rules " + counterValNewRules());
+
+    }
+
+    private void fileReader(String res) {
+        try (Scanner scanner = new Scanner(new File(res))) {
             while (scanner.hasNext()) {
-                String s = scanner.nextLine();
-                fullString.add(s);
+                fullString.add(scanner.nextLine());
             }
 
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
-        createCharString();
-        System.out.println("D8 - the needed amount of memory " + counterVal());
-        createNewFullString();
-        System.out.println("D8/2 - the needed amount of memory " + counterVal2());
-
     }
 
     private int counterVal() {
@@ -37,7 +40,7 @@ public class Day8 {
         return sum;
     }
 
-    private int counterVal2() {
+    private int counterValNewRules() {
         int sum = 0;
         for (int i = 0; i < fullString.size(); i++) {
             sum += newCharString.get(i) - fullString.get(i).length();
