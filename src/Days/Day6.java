@@ -13,19 +13,22 @@ public class Day6 {
     public Day6() {
         init();
         init_new();
-        try (Scanner scanner = new Scanner(new File("resources/D6/input"))) {
+        fileReader("resources/D6/input");
+        System.out.println("D6 - These lights are on: " + readOut());
+        System.out.println("D6/2 - These lights are on ba the new code: " + readOut_new());
+
+    }
+
+    private void fileReader(String res) {
+        try (Scanner scanner = new Scanner(new File(res))) {
             while (scanner.hasNext()) {
                 String text = scanner.nextLine();
                 process(text);
                 process2(text);
             }
-            System.out.println("D6 - These lights are on: " + readOut());
-            System.out.println("D6/2 - These lights are on ba the new code: " + readOut_new());
-
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
-
     }
 
     private static void process(String text) {
