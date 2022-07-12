@@ -14,7 +14,15 @@ public class Day19 {
     final int REPEATS = 2;  // this could be either increase or decrease to get the correct answer... 207
 
     public Day19() {
-        try (Scanner scanner = new Scanner(new File("resources/D19/input"))) {
+        fileReader("resources/D19/input");
+        doTheReplacements(initial);
+        System.out.println("D19 - The unique molecules count is: " + newUniqueMolecules.size());
+
+        System.out.println("D19/2 - The steps is needed to create the molecule is: " + doReverseReplacements(initial));
+    }
+
+    private void fileReader(String res) {
+        try (Scanner scanner = new Scanner(new File(res))) {
             while (scanner.hasNext()) {
                 String input = scanner.nextLine();
                 if (input.equals("")) {
@@ -27,14 +35,9 @@ public class Day19 {
                     initial = input;
                 }
             }
-
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
-        doTheReplacements(initial);
-        System.out.println("D19 - The unique molecules count is: " + newUniqueMolecules.size());
-
-        System.out.println("D19/2 - The steps is needed to create the molecule is: " + doReverseReplacements(initial));
     }
 
     private void doTheReplacements(String initial) {
@@ -47,7 +50,7 @@ public class Day19 {
 
     private int doReverseReplacements(String initial) {
         String storeOldInitial = initial;
-        int possibleMinialValue = Integer.MAX_VALUE;
+        int possibleMinimalValue = Integer.MAX_VALUE;
         for (int i = 0; i < REPEATS; i++) {
             int steps = 0;
             boolean invalid = false;
@@ -67,11 +70,11 @@ public class Day19 {
                     invalid = true;
                 }
             }
-            if (steps < possibleMinialValue) {
-                possibleMinialValue = steps;
+            if (steps < possibleMinimalValue) {
+                possibleMinimalValue = steps;
             }
         }
-        return possibleMinialValue;
+        return possibleMinimalValue;
     }
 
 
@@ -97,13 +100,13 @@ public class Day19 {
         }
     }
 
-    private String replaceOccurrence(String text, String replaceFrom, String replaceTo, int occuranceIndex) {
+    private String replaceOccurrence(String text, String replaceFrom, String replaceTo, int occurrenceIndex) {
         StringBuilder sb = new StringBuilder();
         Pattern p = Pattern.compile(replaceFrom);
         Matcher m = p.matcher(text);
         int count = 0;
         while (m.find()) {
-            if (count++ == occuranceIndex - 1) {
+            if (count++ == occurrenceIndex - 1) {
                 m.appendReplacement(sb, replaceTo);
             }
         }
