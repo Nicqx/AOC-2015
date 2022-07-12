@@ -10,23 +10,17 @@ public class Day18 {
     final int ROUNDS = 100;
 
     public Day18() {
-        try (Scanner scanner = new Scanner(new File("resources/D18/input"))) {
-            int i = 0;
-            while (scanner.hasNext()) {
-                int j = 0;
-                String row = scanner.nextLine();
-                for (int c = 0; c < row.length(); c++) {
-                    grid[i][j] = row.charAt(c) == '#';
-                    j++;
-                }
-                i++;
-            }
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
+        fileReader("resources/D18/input");
         process(false);
         System.out.println("D18 - the number of lights are on after the " + ROUNDS + " rounds: " + countLightsOn());
-        try (Scanner scanner = new Scanner(new File("resources/D18/input"))) {
+
+        fileReader("resources/D18/input");
+        process(true);
+        System.out.println("D18/2 - the number of lights are on after the " + ROUNDS + " rounds with corner locks: " + countLightsOn());
+    }
+
+    private void fileReader(String res) {
+        try (Scanner scanner = new Scanner(new File(res))) {
             int i = 0;
             while (scanner.hasNext()) {
                 int j = 0;
@@ -40,9 +34,6 @@ public class Day18 {
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
-        turnTheCorners();
-        process(true);
-        System.out.println("D18/2 - the number of lights are on after the " + ROUNDS + " rounds with corner locks: " + countLightsOn());
     }
 
     private void turnTheCorners() {
@@ -53,6 +44,9 @@ public class Day18 {
     }
 
     private void process(boolean lock) {
+        if (lock) {
+            turnTheCorners();
+        }
         for (int r = 0; r < ROUNDS; r++) {
             ArrayList<int[]> shouldBeChange = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
@@ -70,8 +64,7 @@ public class Day18 {
             }
             for (int[] ints : shouldBeChange) {
                 if (lock) {
-                    if ((ints[0] == 0 && ints[1] == 0) || (ints[0] == 0 && ints[1] == 99) || (ints[0] == 99 && ints[1] == 0) || (ints[0] == 99 && ints[1] == 99)) {
-                    } else {
+                    if (!skipCorners(ints)) {
                         changeLight(ints[0], ints[1]);
                     }
                 } else {
@@ -79,6 +72,10 @@ public class Day18 {
                 }
             }
         }
+    }
+
+    private boolean skipCorners(int[] ints) {
+        return (ints[0] == 0 && ints[1] == 0) || (ints[0] == 0 && ints[1] == 99) || (ints[0] == 99 && ints[1] == 0) || (ints[0] == 99 && ints[1] == 99);
     }
 
     private int countLightsOn() {
