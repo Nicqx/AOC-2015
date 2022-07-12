@@ -8,37 +8,51 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day14 {
-    public Day14() {
-        final int RACETIME = 2503;
-        ArrayList<Reindeer> fleet = new ArrayList<>();
-        int maxDistance = 0;
-        int maxPoints = 0;
+    ArrayList<Reindeer> fleet = new ArrayList<>();
+    final int RACETIME = 2503;
 
-        try (Scanner scanner = new Scanner(new File("resources/D14/input"))) {
+
+    public Day14() {
+        fileReader("resources/D14/input");
+
+        System.out.println("D14 - The longest distance has the winning reindeer traveled is: " + maxDistance(RACETIME));
+
+        System.out.println("D14/2 - The highest points the winning reindeer has: " + maxPoints(RACETIME));
+
+    }
+
+    private void fileReader(String res) {
+        try (Scanner scanner = new Scanner(new File(res))) {
             while (scanner.hasNext()) {
                 Matcher matcher = Pattern.compile("(\\w+) can fly (\\d+) km/s for (\\d+) seconds, but then must rest for (\\d+) seconds.").matcher(scanner.nextLine());
                 if (matcher.find()) {
                     fleet.add(new Reindeer(Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)), Integer.parseInt(matcher.group(4))));
                 }
             }
-
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
-        for (Reindeer racer : fleet) {
-            if (compete(racer, RACETIME) > maxDistance) {
-                maxDistance = compete(racer, RACETIME);
-            }
-        }
-        System.out.println("D14 - The longest distance has the winning reindeer traveled is: " + maxDistance);
-        competeAgain(RACETIME, fleet);
-        for (Reindeer racer : fleet) {
-            if (racer.getScore() > maxPoints) {
-                maxPoints = racer.getScore();
-            }
-        }
-        System.out.println("D14/2 - The highest points the winning reindeer has: " + maxPoints);
+    }
 
+    private int maxPoints(int raceTime) {
+        int result = 0;
+        competeAgain(raceTime, fleet);
+        for (Reindeer racer : fleet) {
+            if (racer.getScore() > result) {
+                result = racer.getScore();
+            }
+        }
+        return result;
+    }
+
+    private int maxDistance(int raceTime) {
+        int result = 0;
+        for (Reindeer racer : fleet) {
+            if (compete(racer, raceTime) > result) {
+                result = compete(racer, raceTime);
+            }
+        }
+        return result;
     }
 
     private void competeAgain(int time, ArrayList<Reindeer> fleet) {
