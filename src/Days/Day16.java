@@ -12,7 +12,13 @@ public class Day16 {
 
     public Day16() {
         createClues();
-        try (Scanner scanner = new Scanner(new File("resources/D16/input"))) {
+        fileReader("resources/D16/input");
+        System.out.println("D16 - This numbered Aunt Sue gave the present: " + exactMach());
+        System.out.println("D16/2 - This numbered Aunt Sue gave the present: " + rangeMach());
+    }
+
+    private void fileReader(String res) {
+        try (Scanner scanner = new Scanner(new File(res))) {
             while (scanner.hasNext()) {
                 Matcher matcher = Pattern.compile("(\\d+): (\\w+): (\\d+), (\\w++): (\\d+), (\\w+): (\\d+)").matcher(scanner.nextLine());
                 if (matcher.find()) {
@@ -26,8 +32,6 @@ public class Day16 {
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
-        System.out.println("D16 - This numbered Aunt Sue gave the present: " + exactMach());
-        System.out.println("D16/2 - This numbered Aunt Sue gave the present: " + rangeMach());
     }
 
     private Object exactMach() {
@@ -82,6 +86,7 @@ public class Day16 {
         }
         return knowledgeCopy.keySet().toArray()[1];
     }
+
     private void createClues() {
         clues.put("children", 3);
         clues.put("cats", 7);
