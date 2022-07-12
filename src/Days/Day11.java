@@ -6,25 +6,31 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Day11 {
-    String password = "";
-
     public Day11() {
-        try (Scanner scanner = new Scanner(new File("resources/D11/input"))) {
-            while (scanner.hasNext()) {
-                password = scanner.nextLine();
-            }
-            do {
-                password = increment(password, password.length() - 1);
-            } while (validate(password));
-            System.out.println("D11 - the next valid password is: " + password);
-            do {
-                password = increment(password, password.length() - 1);
-            } while (validate(password));
-            System.out.println("D11/2 - the next valid password is: " + password);
+        String password = findNext(fileReader("resources/D11/input"));
 
+        System.out.println("D11 - the next valid password is: " + password);
+
+        System.out.println("D11/2 - the next valid password is: " + findNext(password));
+    }
+
+    private String fileReader(String res) {
+        String result = "";
+        try (Scanner scanner = new Scanner(new File(res))) {
+            while (scanner.hasNext()) {
+                result = scanner.nextLine();
+            }
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         }
+        return result;
+    }
+
+    private String findNext(String password) {
+        do {
+            password = increment(password, password.length() - 1);
+        } while (validate(password));
+        return password;
     }
 
     private boolean validate(String password) {
