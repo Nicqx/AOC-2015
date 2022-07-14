@@ -21,7 +21,7 @@ public class Day2 {
         try (Scanner scanner = new Scanner(new File(res))) {
             while (scanner.hasNext()) {
                 String line = scanner.nextLine();
-                boxes.add(new Box.BoxBuilder(Integer.parseInt(line.split("x")[0]), Integer.parseInt(line.split("x")[1]), Integer.parseInt(line.split("x")[2])).build());
+                boxes.add(new Box.BoxBuilder().width(Integer.parseInt(line.split("x")[0])).height(Integer.parseInt(line.split("x")[1])).length(Integer.parseInt(line.split("x")[2])).build());
             }
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
@@ -45,36 +45,51 @@ public class Day2 {
     }
 
     public static class Box {
-        private final int a;
-        private final int b;
-        private final int c;
+        private final int width;
+        private final int height;
+        private final int length;
 
         public int getRibbonNeed() {
-            return ((a + b + c - max(a, max(b, c))) * 2 + (a * b * c));
+            return ((width + height + length - max(width, max(height, length))) * 2 + (width * height * length));
         }
 
         public int getWrapNeed() {
-            int sideAB = a * b;
-            int sideBC = b * c;
-            int sideAC = a * c;
+            int sideAB = width * height;
+            int sideBC = height * length;
+            int sideAC = width * length;
             return (2 * sideAB) + (2 * sideAC) + (2 * sideBC) + min(sideAB, min(sideAC, sideBC));
         }
 
         private Box(BoxBuilder builder) {
-            this.a = builder.a;
-            this.b = builder.b;
-            this.c = builder.c;
+            this.width = builder.width;
+            this.height = builder.height;
+            this.length = builder.length;
         }
 
         public static class BoxBuilder {
-            private final int a;
-            private final int b;
-            private final int c;
+            private int width;
+            private int height;
+            private int length;
 
-            public BoxBuilder(int a, int b, int c) {
-                this.a = a;
-                this.b = b;
-                this.c = c;
+            public BoxBuilder() {
+            }
+
+            public BoxBuilder width(int width) {
+                this.width = width;
+
+                return this;
+            }
+
+            public BoxBuilder height(int height) {
+                this.height = height;
+
+                return this;
+            }
+
+            public BoxBuilder length(int length) {
+                this.length = length;
+
+                return this;
             }
 
             public Box build() {
