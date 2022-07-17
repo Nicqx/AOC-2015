@@ -1,36 +1,36 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.*;
+import utility.FileReader;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day16 {
+    ArrayList<String> fileContent = new FileReader("resources/D16/input").fileReaderArrayList();
     Map<Integer, Map<String, Integer>> knowledge = new HashMap<>();
     Map<String, Integer> clues = new HashMap<>();
 
     public Day16() {
         createClues();
-        fileReader("resources/D16/input");
+        processFileContent();
         System.out.println("D16 - This numbered Aunt Sue gave the present: " + exactMach());
         System.out.println("D16/2 - This numbered Aunt Sue gave the present: " + rangeMach());
     }
 
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                Matcher matcher = Pattern.compile("(\\d+): (\\w+): (\\d+), (\\w++): (\\d+), (\\w+): (\\d+)").matcher(scanner.nextLine());
-                if (matcher.find()) {
-                    Map<String, Integer> values = new HashMap<>();
-                    values.put(matcher.group(2), Integer.parseInt(matcher.group(3)));
-                    values.put(matcher.group(4), Integer.parseInt(matcher.group(5)));
-                    values.put(matcher.group(6), Integer.parseInt(matcher.group(7)));
-                    knowledge.put(Integer.parseInt(matcher.group(1)), values);
-                }
+    private void processFileContent() {
+        for (String line : fileContent) {
+            Matcher matcher = Pattern.compile("(\\d+): (\\w+): (\\d+), (\\w++): (\\d+), (\\w+): (\\d+)").matcher(line);
+            if (matcher.find()) {
+                Map<String, Integer> values = new HashMap<>();
+                values.put(matcher.group(2), Integer.parseInt(matcher.group(3)));
+                values.put(matcher.group(4), Integer.parseInt(matcher.group(5)));
+                values.put(matcher.group(6), Integer.parseInt(matcher.group(7)));
+                knowledge.put(Integer.parseInt(matcher.group(1)), values);
             }
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
         }
     }
 

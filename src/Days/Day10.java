@@ -1,36 +1,21 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import utility.FileReader;
+
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 public class Day10 {
+    String text = new FileReader("resources/D10/input").fileReaderString();
     private final Map<Character, Integer> store = new HashMap<>();
     int iterations = 40;
-    int nextIterations = 50;
 
     public Day10() {
-        String file = fileReader("resources/D10/input");
-        System.out.println("D10 - the length of the string after " + iterations + " iteration(s) is: " + process(file, iterations).length());
+        System.out.println("D10 - the length of the string after " + iterations + " iteration(s) is: " + process(text, iterations).length());
 
-        System.out.println("D10/2 - the length of the string after " + nextIterations + " iteration(s) is: " + process(file, nextIterations).length());
-    }
-
-    private String fileReader(String res) {
-        String result = "";
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                result = scanner.nextLine();
-            }
-
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
-        return result;
+        System.out.println("D10/2 - the length of the string after " + (iterations + 10) + " iteration(s) is: " + process(text, iterations + 10).length());
     }
 
     private String process(String text, int iterations) {

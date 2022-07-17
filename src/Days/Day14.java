@@ -1,19 +1,19 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import utility.FileReader;
+
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day14 {
+    ArrayList<String> fileContent = new FileReader("resources/D14/input").fileReaderArrayList();
     ArrayList<Reindeer> fleet = new ArrayList<>();
     final int RACETIME = 2503;
 
 
     public Day14() {
-        fileReader("resources/D14/input");
+        processFileContent();
 
         System.out.println("D14 - The longest distance has the winning reindeer traveled is: " + maxDistance(RACETIME));
 
@@ -21,16 +21,12 @@ public class Day14 {
 
     }
 
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                Matcher matcher = Pattern.compile("(\\w+) can fly (\\d+) km/s for (\\d+) seconds, but then must rest for (\\d+) seconds.").matcher(scanner.nextLine());
-                if (matcher.find()) {
-                    fleet.add(new Reindeer(Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)), Integer.parseInt(matcher.group(4))));
-                }
+    private void processFileContent() {
+        for (String line : fileContent) {
+            Matcher matcher = Pattern.compile("(\\w+) can fly (\\d+) km/s for (\\d+) seconds, but then must rest for (\\d+) seconds.").matcher(line);
+            if (matcher.find()) {
+                fleet.add(new Reindeer(Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)), Integer.parseInt(matcher.group(4))));
             }
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
         }
     }
 

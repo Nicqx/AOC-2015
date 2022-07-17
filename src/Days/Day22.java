@@ -1,12 +1,14 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import utility.FileReader;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day22 {
+    ArrayList<String> fileContent = new FileReader("resources/D22/input").fileReaderArrayList();
+
     enum action {INSTANT, TIMED}
 
     int bossHit = 0;
@@ -16,7 +18,7 @@ public class Day22 {
     SpellContainer spellContainer;
 
     public Day22() {
-        fileReader("resources/D22/input");
+        processFileContent();
 
         System.out.println("D22 - The minimal used mana to player wins: " + findLeastMana(false, 1000));
         ////////-----comment for manual casting
@@ -100,21 +102,16 @@ public class Day22 {
         return leastMana;
     }
 
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                Matcher matcher = Pattern.compile("Hit Points: (\\d+)").matcher(scanner.nextLine());
-                if (matcher.find()) {
-                    bossHit = Integer.parseInt(matcher.group(1));
-                }
-                matcher = Pattern.compile("Damage: (\\d+)").matcher(scanner.nextLine());
-                if (matcher.find()) {
-                    bossDamage = Integer.parseInt(matcher.group(1));
-                }
+    private void processFileContent() {
+        for (String line : fileContent) {
+            Matcher matcher = Pattern.compile("Hit Points: (\\d+)").matcher(line);
+            if (matcher.find()) {
+                bossHit = Integer.parseInt(matcher.group(1));
             }
-
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
+            matcher = Pattern.compile("Damage: (\\d+)").matcher(line);
+            if (matcher.find()) {
+                bossDamage = Integer.parseInt(matcher.group(1));
+            }
         }
     }
 

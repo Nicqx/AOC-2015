@@ -1,35 +1,28 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
+import utility.FileReader;
+
+import java.util.ArrayList;
 
 public class Day5 {
+    ArrayList<String> fileContent = new FileReader("resources/D5/input").fileReaderArrayList();
     int counter_old = 0;
     int counter_new = 0;
 
     public Day5() {
-        fileReader("resources/D5/input");
+        processFileContent();
         System.out.println("D5 - The counter of nice strings with old rule is: " + counter_old);
         System.out.println("D5/2 - The counter of nice strings with new rule is: " + counter_new);
-
-
     }
 
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-
-            while (scanner.hasNext()) {
-                String text = scanner.nextLine();
-                if (process_old(text)) {
-                    counter_old++;
-                }
-                if (process_new(text)) {
-                    counter_new++;
-                }
+    private void processFileContent() {
+        for (String line : fileContent) {
+            if (process_old(line)) {
+                counter_old++;
             }
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
+            if (process_new(line)) {
+                counter_new++;
+            }
         }
     }
 

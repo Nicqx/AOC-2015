@@ -1,20 +1,20 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import utility.FileReader;
+
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day15 {
+    ArrayList<String> fileContent = new FileReader("resources/D15/input").fileReaderArrayList();
     private static final int INGREDIENTS = 100;
     ArrayList<Ingredients> ingredientsList = new ArrayList<>();
     final ArrayList<int[]> combinations = combinations();
 
 
     public Day15() {
-        fileReader("resources/D15/input");
+        processFileContent();
 
         System.out.println("D15 - The highest-scoring cookie's score is: " + calculateHighestScoring());
 
@@ -41,16 +41,12 @@ public class Day15 {
         return result;
     }
 
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                Matcher matcher = Pattern.compile("(\\w+): capacity (-?\\d+), durability (-?\\d+), flavor (-?\\d+), texture (-?\\d+), calories (-?\\d+)").matcher(scanner.nextLine());
-                if (matcher.find()) {
-                    ingredientsList.add(new Ingredients(Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)), Integer.parseInt(matcher.group(4)), Integer.parseInt(matcher.group(5)), Integer.parseInt(matcher.group(6))));
-                }
+    private void processFileContent() {
+        for (String line : fileContent) {
+            Matcher matcher = Pattern.compile("(\\w+): capacity (-?\\d+), durability (-?\\d+), flavor (-?\\d+), texture (-?\\d+), calories (-?\\d+)").matcher(line);
+            if (matcher.find()) {
+                ingredientsList.add(new Ingredients(Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)), Integer.parseInt(matcher.group(4)), Integer.parseInt(matcher.group(5)), Integer.parseInt(matcher.group(6))));
             }
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
         }
     }
 

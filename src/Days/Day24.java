@@ -1,17 +1,18 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import utility.FileReader;
+
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Day24 {
+    ArrayList<String> fileContent = new FileReader("resources/D24/input").fileReaderArrayList();
+
     ArrayList<Integer> numbers = new ArrayList<>();
     ArrayList<ArrayList<Integer>> variations = new ArrayList<>();
     int sum;
 
     public Day24() {
-        fileReader("resources/D24/input");
+        processFileContent();
         sum = numbers.stream().mapToInt(Integer::intValue).sum();
         generateVariations(3);
         System.out.println("D24 - the QE for the first group: " + minimalQEinMinimalPiece());
@@ -19,14 +20,9 @@ public class Day24 {
         System.out.println("D24/2 - the QE for the first group with 4 place: " + minimalQEinMinimalPiece());
     }
 
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                numbers.add(Integer.parseInt(scanner.nextLine()));
-            }
-
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
+    private void processFileContent() {
+        for (String line : fileContent) {
+            numbers.add(Integer.parseInt(line));
         }
     }
 

@@ -1,30 +1,26 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import utility.FileReader;
+
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public class Day2 {
+    ArrayList<String> fileContent = new FileReader("resources/D2/input").fileReaderArrayList();
     private final ArrayList<Box> boxes = new ArrayList<>();
 
+
     public Day2() {
-        fileReader("resources/D2/input");
+        processFileContent();
         System.out.println("D2 - The elves need to order this amount: " + processWrap());
         System.out.println("D2/2 - The elves used for the ribbon this length: " + processRibbon());
     }
 
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                String line = scanner.nextLine();
-                boxes.add(new Box.BoxBuilder().width(Integer.parseInt(line.split("x")[0])).height(Integer.parseInt(line.split("x")[1])).length(Integer.parseInt(line.split("x")[2])).build());
-            }
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
+    private void processFileContent() {
+        for (String line : fileContent) {
+            boxes.add(new Box.BoxBuilder().width(Integer.parseInt(line.split("x")[0])).height(Integer.parseInt(line.split("x")[1])).length(Integer.parseInt(line.split("x")[2])).build());
         }
     }
 

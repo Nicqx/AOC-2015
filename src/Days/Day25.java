@@ -1,18 +1,18 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
+import utility.FileReader;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day25 {
+    String text = new FileReader("resources/D25/input").fileReaderString();
     long start = 20151125;
     int reqXCoord;
     int reqYCoord;
 
     public Day25() {
-        fileReader("resources/D25/input");
+        processFileContent(text);
 
         System.out.println("D25 - the code in x:" + reqXCoord + ", and y:" + reqYCoord + ", val: " + calculateCode(start));
     }
@@ -44,17 +44,11 @@ public class Day25 {
         return start;
     }
 
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                Matcher matcher = Pattern.compile("To continue, please consult the code grid in the manual\\.  Enter the code at row (\\d+), column (\\d+)\\.").matcher(scanner.nextLine());
-                if (matcher.find()) {
-                    reqXCoord = Integer.parseInt(matcher.group(2));
-                    reqYCoord = Integer.parseInt(matcher.group(1));
-                }
-            }
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
+    private void processFileContent(String text) {
+        Matcher matcher = Pattern.compile("To continue, please consult the code grid in the manual\\.  Enter the code at row (\\d+), column (\\d+)\\.").matcher(text);
+        if (matcher.find()) {
+            reqXCoord = Integer.parseInt(matcher.group(2));
+            reqYCoord = Integer.parseInt(matcher.group(1));
         }
     }
 
