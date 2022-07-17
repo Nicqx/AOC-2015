@@ -1,12 +1,13 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import utility.FileReader;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day19 {
+    ArrayList<String> fileContent = new FileReader("resources/D19/input").fileReaderArrayList();
     ArrayList<String[]> replacements = new ArrayList<>();
     Set<String> newUniqueMolecules = new HashSet<>();
     String initial;
@@ -14,29 +15,24 @@ public class Day19 {
     final int REPEATS = 2;  // this could be either increase or decrease to get the correct answer... 207
 
     public Day19() {
-        fileReader("resources/D19/input");
+        processFileContent();
         doTheReplacements(initial);
         System.out.println("D19 - The unique molecules count is: " + newUniqueMolecules.size());
 
         System.out.println("D19/2 - The steps is needed to create the molecule is: " + doReverseReplacements(initial));
     }
 
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                String input = scanner.nextLine();
-                if (input.equals("")) {
-                    continue;
-                }
-                Matcher matcher = Pattern.compile("(\\w+) => (\\w+)").matcher(input);
-                if (matcher.find()) {
-                    replacements.add(new String[]{matcher.group(1), matcher.group(2)});
-                } else {
-                    initial = input;
-                }
+    private void processFileContent() {
+        for (String line : fileContent) {
+            if (line.equals("")) {
+                continue;
             }
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
+            Matcher matcher = Pattern.compile("(\\w+) => (\\w+)").matcher(line);
+            if (matcher.find()) {
+                replacements.add(new String[]{matcher.group(1), matcher.group(2)});
+            } else {
+                initial = line;
+            }
         }
     }
 
@@ -113,6 +109,4 @@ public class Day19 {
         m.appendTail(sb);
         return sb.toString();
     }
-
-
 }

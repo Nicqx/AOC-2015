@@ -1,18 +1,22 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.*;
+import utility.FileReader;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day13 {
+    ArrayList<String> fileContent = new FileReader("resources/D13/input").fileReaderArrayList();
     ArrayList<Happiness> happinessMatrix = new ArrayList<>();
     Set<String> namesSet = new HashSet<>();
     ArrayList<String> namesPermutationList = new ArrayList<>();
 
     public Day13() {
-        fileReader("resources/D13/input");
+        processFileContent();
         System.out.println("D13 - the happiest value is: " + calcMaxHappiness());
 
         namesPermutationList.clear();
@@ -20,22 +24,16 @@ public class Day13 {
         System.out.println("D13/2 - the happiest value with me is: " + calcMaxHappiness());
     }
 
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                String input = scanner.nextLine();
-                Matcher matcher = Pattern.compile("(\\w+) would gain (\\d+) happiness units by sitting next to (\\w+).").matcher(input);
-                if (matcher.find()) {
-                    happinessMatrix.add(new Happiness(matcher.group(1), matcher.group(3), Integer.parseInt(matcher.group(2))));
-                }
-                matcher = Pattern.compile("(\\w+) would lose (\\d+) happiness units by sitting next to (\\w+).").matcher(input);
-                if (matcher.find()) {
-                    happinessMatrix.add(new Happiness(matcher.group(1), matcher.group(3), Integer.parseInt(matcher.group(2)) * -1));
-                }
+    private void processFileContent() {
+        for (String line : fileContent) {
+            Matcher matcher = Pattern.compile("(\\w+) would gain (\\d+) happiness units by sitting next to (\\w+).").matcher(line);
+            if (matcher.find()) {
+                happinessMatrix.add(new Happiness(matcher.group(1), matcher.group(3), Integer.parseInt(matcher.group(2))));
             }
-
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
+            matcher = Pattern.compile("(\\w+) would lose (\\d+) happiness units by sitting next to (\\w+).").matcher(line);
+            if (matcher.find()) {
+                happinessMatrix.add(new Happiness(matcher.group(1), matcher.group(3), Integer.parseInt(matcher.group(2)) * -1));
+            }
         }
     }
 

@@ -1,29 +1,26 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import utility.FileReader;
+
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Day17 {
+    ArrayList<String> fileContent = new FileReader("resources/D17/input").fileReaderArrayList();
     private final int ALLAMOUNT = 150;
     ArrayList<Integer> containers = new ArrayList<>();
     ArrayList<ArrayList<Integer>> variations = new ArrayList<>();
 
     public Day17() {
-        fileReader("resources/D17/input");
+        processFileContent();
         generateVariations();
         System.out.println("D17 - The possible variations to store all eggnog: " + getValidVariations());
         System.out.println("D17/2 - The possible different variations to store all eggnog: " + getMinimalValidVariations());
 
     }
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                containers.add(Integer.parseInt(scanner.nextLine()));
-            }
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
+
+    private void processFileContent() {
+        for (String line : fileContent) {
+            containers.add(Integer.parseInt(line));
         }
     }
 

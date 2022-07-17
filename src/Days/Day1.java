@@ -1,27 +1,14 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
+import utility.FileReader;
 
 public class Day1 {
     private static int coord = 0;
 
     public Day1() {
-        System.out.println("D1 - Santa goes to floor: " + process(fileReader("resources/D1/input")));
+        String text = new FileReader("resources/D1/input").fileReaderString();
+        System.out.println("D1 - Santa goes to floor: " + process(text));
         System.out.println("D1/2 - Santa enters to the basement at: " + coord);
-    }
-
-    private String fileReader(String res) {
-        String text = "";
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                text = scanner.nextLine();
-            }
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
-        return text;
     }
 
     private static int process(String text) {

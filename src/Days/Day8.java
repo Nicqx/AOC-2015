@@ -1,19 +1,19 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import utility.FileReader;
+
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day8 {
+    ArrayList<String> fileContent = new FileReader("resources/D8/input").fileReaderArrayList();
     ArrayList<String> fullString = new ArrayList<>();
     ArrayList<Integer> charString = new ArrayList<>();
     ArrayList<Integer> newCharString = new ArrayList<>();
 
     public Day8() {
-        fileReader("resources/D8/input");
+        processFileContent();
         createCharString();
         System.out.println("D8 - the needed amount of memory " + counterVal());
         createNewFullString();
@@ -21,15 +21,8 @@ public class Day8 {
 
     }
 
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                fullString.add(scanner.nextLine());
-            }
-
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
+    private void processFileContent() {
+        fullString.addAll(fileContent);
     }
 
     private int counterVal() {

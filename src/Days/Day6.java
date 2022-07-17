@@ -1,33 +1,28 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
+import utility.FileReader;
+
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day6 {
+    ArrayList<String> fileContent = new FileReader("resources/D6/input").fileReaderArrayList();
     static private final int[][] matrix_old = new int[1000][1000];
     static private final int[][] matrix_new = new int[1000][1000];
 
     public Day6() {
         init();
         init_new();
-        fileReader("resources/D6/input");
+        processFileContent();
         System.out.println("D6 - These lights are on: " + readOut());
-        System.out.println("D6/2 - These lights are on ba the new code: " + readOut_new());
-
+        System.out.println("D6/2 - These lights are on by the new code: " + readOut_new());
     }
 
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                String text = scanner.nextLine();
-                process(text);
-                process2(text);
-            }
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
+    private void processFileContent() {
+        for (String line : fileContent) {
+            process(line);
+            process2(line);
         }
     }
 

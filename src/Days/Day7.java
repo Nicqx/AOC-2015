@@ -1,44 +1,27 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import utility.FileReader;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day7 {
+    ArrayList<String> fileContent = new FileReader("resources/D7/input").fileReaderArrayList();
     Map<String, String> nodes = new HashMap<>();
-    String bOutput;
 
     public Day7() {
-        fileReader("resources/D7/input");
-        while (resolveDirect() || replaceResolved() || resolveOpr()) {
-        }
         String checkFor = "a";
+        processFileContent(null);
         System.out.println("D7 - The value of " + checkFor + " : " + nodes.get(checkFor));
 
-        bOutput = nodes.get(checkFor);
+        String bOutput = nodes.get(checkFor);
         nodes.clear();
-        fileReader("resources/D7/input");
-        while (resolveDirect() || replaceResolved() || resolveOpr()) {
-        }
+        processFileContent(bOutput);
         System.out.println("D7/2 - The value of " + checkFor + " : " + nodes.get(checkFor));
 
-    }
-
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                String text = scanner.nextLine();
-                process_input(text, bOutput);
-            }
-
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
     }
 
     private boolean isResolved(String val) {
@@ -232,7 +215,6 @@ public class Day7 {
                 x.replace(i, i + 1, "1");
             }
         }
-
         return String.valueOf(Integer.parseInt(x.toString(), 2));
     }
 
@@ -244,15 +226,18 @@ public class Day7 {
         return x.toString();
     }
 
-    private void process_input(String text, String bOutput) {
-        Matcher matcher = Pattern.compile("(.+) -> (\\w+)").matcher(text);
-        if (matcher.find()) {
-            if (matcher.group(2).equals("b") && bOutput != null) {
-                nodes.put(matcher.group(2), bOutput);
-            } else {
-                nodes.put(matcher.group(2), matcher.group(1));
+    private void processFileContent(String bOutput) {
+        for (String line : fileContent) {
+            Matcher matcher = Pattern.compile("(.+) -> (\\w+)").matcher(line);
+            if (matcher.find()) {
+                if (matcher.group(2).equals("b") && bOutput != null) {
+                    nodes.put(matcher.group(2), bOutput);
+                } else {
+                    nodes.put(matcher.group(2), matcher.group(1));
+                }
             }
         }
+        while (resolveDirect() || replaceResolved() || resolveOpr()) {
+        }
     }
-
 }

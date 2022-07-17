@@ -1,38 +1,33 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import utility.FileReader;
+
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Day18 {
+    ArrayList<String> fileContent = new FileReader("resources/D18/input").fileReaderArrayList();
     boolean[][] grid = new boolean[100][100];
     final int ROUNDS = 100;
 
     public Day18() {
-        fileReader("resources/D18/input");
+        processFileContent();
         process(false);
         System.out.println("D18 - the number of lights are on after the " + ROUNDS + " rounds: " + countLightsOn());
 
-        fileReader("resources/D18/input");
+        processFileContent();
         process(true);
         System.out.println("D18/2 - the number of lights are on after the " + ROUNDS + " rounds with corner locks: " + countLightsOn());
     }
 
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-            int i = 0;
-            while (scanner.hasNext()) {
-                int j = 0;
-                String row = scanner.nextLine();
-                for (int c = 0; c < row.length(); c++) {
-                    grid[i][j] = row.charAt(c) == '#';
-                    j++;
-                }
-                i++;
+    private void processFileContent() {
+        int i = 0;
+        for (String line : fileContent) {
+            int j = 0;
+            for (int c = 0; c < line.length(); c++) {
+                grid[i][j] = line.charAt(c) == '#';
+                j++;
             }
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
+            i++;
         }
     }
 

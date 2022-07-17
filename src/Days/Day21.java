@@ -1,14 +1,16 @@
 package Days;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import utility.FileReader;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day21 {
+    ArrayList<String> fileContent = new FileReader("resources/D21/input").fileReaderArrayList();
+
     static Map<Integer, Weapon> weaponShop = new HashMap<>();
     static Map<Integer, Armor> armorShop = new HashMap<>();
     static Map<Integer, Ring> ringShop = new HashMap<>();
@@ -18,32 +20,28 @@ public class Day21 {
 
     public Day21() {
 
-        fileReader("resources/D21/input");
+        processFileContent();
         initShop();
         System.out.println("D21 - The minimal cost when player is win: " + genFightMinimalCost(bossHit, bossDamage, bossArmor));
         System.out.println("D21/2 - The maximal cost when player is lose: " + genFightMaximalLosingCost(bossHit, bossDamage, bossArmor));
     }
 
-    private void fileReader(String res) {
-        try (Scanner scanner = new Scanner(new File(res))) {
-            while (scanner.hasNext()) {
-                Matcher matcher = Pattern.compile("Hit Points: (\\d+)").matcher(scanner.nextLine());
+    private void processFileContent() {
+            for (String line : fileContent) {
+                Matcher matcher = Pattern.compile("Hit Points: (\\d+)").matcher(line);
                 if (matcher.find()) {
                     bossHit = Integer.parseInt(matcher.group(1));
                 }
-                matcher = Pattern.compile("Damage: (\\d+)").matcher(scanner.nextLine());
+                matcher = Pattern.compile("Damage: (\\d+)").matcher(line);
                 if (matcher.find()) {
                     bossDamage = Integer.parseInt(matcher.group(1));
                 }
-                matcher = Pattern.compile("Armor: (\\d+)").matcher(scanner.nextLine());
+                matcher = Pattern.compile("Armor: (\\d+)").matcher(line);
                 if (matcher.find()) {
                     bossArmor = Integer.parseInt(matcher.group(1));
                 }
             }
 
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
     }
 
     private int genFightMinimalCost(int bossHit, int bossDamage, int bossArmor) {
