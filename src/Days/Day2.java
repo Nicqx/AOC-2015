@@ -8,23 +8,24 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public class Day2 {
-    ArrayList<String> fileContent = new FileReader("resources/D2/input").fileReaderArrayList();
-    private final ArrayList<Box> boxes = new ArrayList<>();
+    static ArrayList<String> fileContent = new FileReader("resources/D2/input").fileReaderArrayList();
+    static final ArrayList<Box> boxes = new ArrayList<>();
 
 
     public Day2() {
-        processFileContent();
+        processFileContent(fileContent);
         System.out.println("D2 - The elves need to order this amount: " + processWrap());
         System.out.println("D2/2 - The elves used for the ribbon this length: " + processRibbon());
     }
 
-    private void processFileContent() {
+    static void processFileContent(ArrayList<String> fileContent) {
+        boxes.clear();
         for (String line : fileContent) {
             boxes.add(new Box.BoxBuilder().width(Integer.parseInt(line.split("x")[0])).height(Integer.parseInt(line.split("x")[1])).length(Integer.parseInt(line.split("x")[2])).build());
         }
     }
 
-    private int processRibbon() {
+    static int processRibbon() {
         int completeRibbonLength = 0;
         for (Box box : boxes) {
             completeRibbonLength += box.getRibbonNeed();
@@ -32,7 +33,7 @@ public class Day2 {
         return completeRibbonLength;
     }
 
-    private int processWrap() {
+    static int processWrap() {
         int completeSurface = 0;
         for (Box box : boxes) {
             completeSurface += box.getWrapNeed();
