@@ -18,16 +18,18 @@ class Day1Test {
         String text = new FileReader(inputFile).fileReaderString();
         Assert.assertEquals(findLastPosition(text), Integer.parseInt(files.split(":")[1]), "Expected result is not correct");
     }
+
     @ParameterizedTest
-    @ValueSource(strings={"input10:1", "input11:5"})
-    void checkSecondPart(String files){
+    @ValueSource(strings = {"input10:1", "input11:5"})
+    void checkSecondPart(String files) {
         String inputFile = "test-resources/D1/" + files.split(":")[0];
         String text = new FileReader(inputFile).fileReaderString();
         Assert.assertEquals(findFirstBasementCoord(text), Integer.parseInt(files.split(":")[1]), "Expected result is not correct");
     }
+
     @ParameterizedTest
-    @ValueSource(strings={"input:74:1795"})
-    void checkOriginalInput(String files){
+    @ValueSource(strings = {"input:74:1795"})
+    void checkOriginalInput(String files) {
         String inputFile = "resources/D1/" + files.split(":")[0];
         String text = new FileReader(inputFile).fileReaderString();
         Assert.assertEquals(findLastPosition(text), Integer.parseInt(files.split(":")[1]), "Expected result is not correct");
