@@ -13,7 +13,7 @@ public class Day3 {
         System.out.println("D3/2 - These amount of houses was visited with Robo-Santa at least once: " + processRouteWithRoboSanta(text));
     }
 
-    private static int processRoute(String text) {
+    static int processRoute(String text) {
         Set<String> coords = new HashSet<>();
         int x = 0;
         int y = 0;
@@ -41,7 +41,7 @@ public class Day3 {
         return coords.size();
     }
 
-    private static int processRouteWithRoboSanta(String text) {
+    static int processRouteWithRoboSanta(String text) {
         Set<String> coords = new HashSet<>();
 
         int Sx = 0;
