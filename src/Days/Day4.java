@@ -13,7 +13,7 @@ public class Day4 {
         System.out.println("D4/2 - Your second answer is: " + genPass(text, "000000"));
     }
 
-    private static int genPass(String text, String match) {
+    static int genPass(String text, String match) {
         int answer = 0;
         while (!hashMD5(text + answer).startsWith(match)) {
             answer++;
@@ -21,7 +21,7 @@ public class Day4 {
         return answer;
     }
 
-    private static String hashMD5(String text) {
+    static String hashMD5(String text) {
         byte[] msg = text.getBytes();
 
         byte[] hash = null;
