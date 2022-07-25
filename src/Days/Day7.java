@@ -10,21 +10,21 @@ import java.util.regex.Pattern;
 
 public class Day7 {
     ArrayList<String> fileContent = new FileReader("resources/D7/input").fileReaderArrayList();
-    Map<String, String> nodes = new HashMap<>();
 
     public Day7() {
+        Map<String, String> nodes = new HashMap<>();
         String checkFor = "a";
-        processFileContent(null);
+        processFileContent(fileContent,null, nodes);
         System.out.println("D7 - The value of " + checkFor + " : " + nodes.get(checkFor));
 
         String bOutput = nodes.get(checkFor);
         nodes.clear();
-        processFileContent(bOutput);
+        processFileContent(fileContent, bOutput, nodes);
         System.out.println("D7/2 - The value of " + checkFor + " : " + nodes.get(checkFor));
 
     }
 
-    private boolean isResolved(String val) {
+    static boolean isResolved(String val, Map<String, String> nodes) {
         try {
             Integer.parseInt(nodes.get(val));
             return true;
@@ -33,7 +33,7 @@ public class Day7 {
         }
     }
 
-    private boolean resolveDirect() {
+    static boolean resolveDirect(Map<String, String> nodes) {
         boolean isChanged = false;
         ArrayList<String> resolve = new ArrayList<>();
         for (String key : nodes.keySet()) {
@@ -46,7 +46,7 @@ public class Day7 {
             Matcher matcher = Pattern.compile("^(\\D+)$").matcher(nodes.get(key));
             if (matcher.find()) {
                 if (resolve.contains(matcher.group(1))) {
-                    if (isResolved(matcher.group(1))) {
+                    if (isResolved(matcher.group(1), nodes)) {
                         nodes.replace(key, nodes.get(matcher.group(1)));
                         isChanged = true;
                     }
@@ -56,68 +56,68 @@ public class Day7 {
         return isChanged;
     }
 
-    private boolean replaceResolved() {
+    static boolean replaceResolved(Map<String, String> nodes) {
         boolean isChanged = false;
         for (String key : nodes.keySet()) {
             Matcher matcher = Pattern.compile("NOT\\W(\\D+)").matcher(nodes.get(key));
             if (matcher.find()) {
-                if (isResolved(matcher.group(1))) {
+                if (isResolved(matcher.group(1), nodes)) {
                     nodes.replace(key, "NOT " + nodes.get(matcher.group(1)));
                     isChanged = true;
                 }
             }
             matcher = Pattern.compile("(\\d+)\\WAND\\W(\\D+)").matcher(nodes.get(key));
             if (matcher.find()) {
-                if (isResolved(matcher.group(2))) {
+                if (isResolved(matcher.group(2), nodes)) {
                     nodes.replace(key, matcher.group(1) + " AND " + nodes.get(matcher.group(2)));
                     isChanged = true;
                 }
             }
             matcher = Pattern.compile("(\\D+)\\WAND\\W(\\d+)").matcher(nodes.get(key));
             if (matcher.find()) {
-                if (isResolved(matcher.group(1))) {
+                if (isResolved(matcher.group(1), nodes)) {
                     nodes.replace(key, nodes.get(matcher.group(1)) + " AND " + matcher.group(2));
                     isChanged = true;
                 }
             }
             matcher = Pattern.compile("(\\D+)\\WAND\\W(\\D+)").matcher(nodes.get(key));
             if (matcher.find()) {
-                if (isResolved(matcher.group(1)) && isResolved(matcher.group(2))) {
+                if (isResolved(matcher.group(1), nodes) && isResolved(matcher.group(2), nodes)) {
                     nodes.replace(key, nodes.get(matcher.group(1)) + " AND " + nodes.get(matcher.group(2)));
                     isChanged = true;
                 }
             }
             matcher = Pattern.compile("(\\d+)\\WOR\\W(\\D+)").matcher(nodes.get(key));
             if (matcher.find()) {
-                if (isResolved(matcher.group(2))) {
+                if (isResolved(matcher.group(2), nodes)) {
                     nodes.replace(key, matcher.group(1) + " OR " + nodes.get(matcher.group(2)));
                     isChanged = true;
                 }
             }
             matcher = Pattern.compile("(\\D+)\\WOR\\W(\\d+)").matcher(nodes.get(key));
             if (matcher.find()) {
-                if (isResolved(matcher.group(1))) {
+                if (isResolved(matcher.group(1), nodes)) {
                     nodes.replace(key, nodes.get(matcher.group(1)) + " OR " + matcher.group(2));
                     isChanged = true;
                 }
             }
             matcher = Pattern.compile("(\\D+)\\WOR\\W(\\D+)").matcher(nodes.get(key));
             if (matcher.find()) {
-                if (isResolved(matcher.group(1)) && isResolved(matcher.group(2))) {
+                if (isResolved(matcher.group(1), nodes) && isResolved(matcher.group(2), nodes)) {
                     nodes.replace(key, nodes.get(matcher.group(1)) + " OR " + nodes.get(matcher.group(2)));
                     isChanged = true;
                 }
             }
             matcher = Pattern.compile("(\\D+)\\WLSHIFT\\W(\\d+)").matcher(nodes.get(key));
             if (matcher.find()) {
-                if (isResolved(matcher.group(1))) {
+                if (isResolved(matcher.group(1), nodes)) {
                     nodes.replace(key, nodes.get(matcher.group(1)) + " LSHIFT " + matcher.group(2));
                     isChanged = true;
                 }
             }
             matcher = Pattern.compile("(\\D+)\\WRSHIFT\\W(\\d+)").matcher(nodes.get(key));
             if (matcher.find()) {
-                if (isResolved(matcher.group(1))) {
+                if (isResolved(matcher.group(1), nodes)) {
                     nodes.replace(key, nodes.get(matcher.group(1)) + " RSHIFT " + matcher.group(2));
                     isChanged = true;
                 }
@@ -126,7 +126,7 @@ public class Day7 {
         return isChanged;
     }
 
-    private boolean resolveOpr() {
+    static boolean resolveOpr(Map<String, String> nodes) {
         boolean isChanged = false;
         for (String key : nodes.keySet()) {
             Matcher matcher = Pattern.compile("NOT (\\d+)").matcher(nodes.get(key));
@@ -159,7 +159,7 @@ public class Day7 {
         return isChanged;
     }
 
-    private String rsOp(int value1, int value2) {
+    static String rsOp(int value1, int value2) {
         StringBuilder x = new StringBuilder(to16Bin(String.valueOf(value1)));
         for (int i = 0; i < value2; i++) {
             x.insert(0, "0");
@@ -168,7 +168,7 @@ public class Day7 {
         return String.valueOf(Integer.parseInt(x.toString(), 2));
     }
 
-    private String lsOp(int value1, int value2) {
+    static String lsOp(int value1, int value2) {
         StringBuilder x = new StringBuilder(to16Bin(String.valueOf(value1)));
         for (int i = 0; i < value2; i++) {
             x.append("0");
@@ -177,7 +177,7 @@ public class Day7 {
         return String.valueOf(Integer.parseInt(x.toString(), 2));
     }
 
-    private String orOp(int value1, int value2) {
+    static String orOp(int value1, int value2) {
         StringBuilder x = new StringBuilder(to16Bin(String.valueOf(value1)));
         StringBuilder y = new StringBuilder(to16Bin(String.valueOf(value2)));
         StringBuilder result = new StringBuilder();
@@ -191,7 +191,7 @@ public class Day7 {
         return String.valueOf(Integer.parseInt(result.toString(), 2));
     }
 
-    private String andOp(int value1, int value2) {
+    static String andOp(int value1, int value2) {
         StringBuilder x = new StringBuilder(to16Bin(String.valueOf(value1)));
         StringBuilder y = new StringBuilder(to16Bin(String.valueOf(value2)));
         StringBuilder result = new StringBuilder();
@@ -205,7 +205,7 @@ public class Day7 {
         return String.valueOf(Integer.parseInt(result.toString(), 2));
     }
 
-    private String notOp(int value) {
+    static String notOp(int value) {
         StringBuilder x = new StringBuilder(to16Bin(String.valueOf(value)));
         for (int i = 0; i < x.length(); i++) {
             if (x.charAt(i) == '1') {
@@ -218,7 +218,7 @@ public class Day7 {
         return String.valueOf(Integer.parseInt(x.toString(), 2));
     }
 
-    private String to16Bin(String value) {
+    static String to16Bin(String value) {
         StringBuilder x = new StringBuilder(Integer.toBinaryString(Integer.parseInt(value)));
         while (x.length() < 16) {
             x.insert(0, "0");
@@ -226,7 +226,7 @@ public class Day7 {
         return x.toString();
     }
 
-    private void processFileContent(String bOutput) {
+    static void processFileContent(ArrayList<String> fileContent, String bOutput, Map<String, String> nodes) {
         for (String line : fileContent) {
             Matcher matcher = Pattern.compile("(.+) -> (\\w+)").matcher(line);
             if (matcher.find()) {
@@ -237,7 +237,7 @@ public class Day7 {
                 }
             }
         }
-        while (resolveDirect() || replaceResolved() || resolveOpr()) {
+        while (resolveDirect(nodes) || replaceResolved(nodes) || resolveOpr(nodes)) {
         }
     }
 }
