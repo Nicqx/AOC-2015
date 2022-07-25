@@ -14,19 +14,19 @@ public class Day6 {
     public Day6() {
         init();
         init_new();
-        processFileContent();
+        processFileContent(fileContent);
         System.out.println("D6 - These lights are on: " + readOut());
         System.out.println("D6/2 - These lights are on by the new code: " + readOut_new());
     }
 
-    private void processFileContent() {
+    static void processFileContent(ArrayList<String> fileContent) {
         for (String line : fileContent) {
             process(line);
             process2(line);
         }
     }
 
-    private static void process(String text) {
+    static void process(String text) {
         Matcher onMatcher = Pattern.compile("turn on (\\d+),(\\d+) through (\\d+),(\\d+)").matcher(text);
         Matcher offMatcher = Pattern.compile("turn off (\\d+),(\\d+) through (\\d+),(\\d+)").matcher(text);
         Matcher toggleMatcher = Pattern.compile("toggle (\\d+),(\\d+) through (\\d+),(\\d+)").matcher(text);
@@ -51,7 +51,7 @@ public class Day6 {
         }
     }
 
-    private static void process2(String text) {
+    static void process2(String text) {
         Matcher onMatcher = Pattern.compile("turn on (\\d+),(\\d+) through (\\d+),(\\d+)").matcher(text);
         Matcher offMatcher = Pattern.compile("turn off (\\d+),(\\d+) through (\\d+),(\\d+)").matcher(text);
         Matcher toggleMatcher = Pattern.compile("toggle (\\d+),(\\d+) through (\\d+),(\\d+)").matcher(text);
@@ -76,7 +76,7 @@ public class Day6 {
         }
     }
 
-    private static void turnOut(int a, int b, int c, int d) {
+    static void turnOut(int a, int b, int c, int d) {
         for (int x = a; x <= c; x++) {
             for (int y = b; y <= d; y++) {
                 matrix_old[x][y] = -1;
@@ -84,7 +84,7 @@ public class Day6 {
         }
     }
 
-    private static void turnOut_new(int a, int b, int c, int d) {
+    static void turnOut_new(int a, int b, int c, int d) {
         for (int x = a; x <= c; x++) {
             for (int y = b; y <= d; y++) {
                 if (matrix_new[x][y] > 0) {
@@ -94,7 +94,7 @@ public class Day6 {
         }
     }
 
-    private static void turnOn(int a, int b, int c, int d) {
+    static void turnOn(int a, int b, int c, int d) {
         for (int x = a; x <= c; x++) {
             for (int y = b; y <= d; y++) {
                 matrix_old[x][y] = 1;
@@ -102,7 +102,7 @@ public class Day6 {
         }
     }
 
-    private static void turnOn_new(int a, int b, int c, int d) {
+    static void turnOn_new(int a, int b, int c, int d) {
         for (int x = a; x <= c; x++) {
             for (int y = b; y <= d; y++) {
                 matrix_new[x][y] += 1;
@@ -110,7 +110,7 @@ public class Day6 {
         }
     }
 
-    private static void toggle(int a, int b, int c, int d) {
+    static void toggle(int a, int b, int c, int d) {
         for (int x = a; x <= c; x++) {
             for (int y = b; y <= d; y++) {
                 matrix_old[x][y] *= -1;
@@ -118,7 +118,7 @@ public class Day6 {
         }
     }
 
-    private static void toggle_new(int a, int b, int c, int d) {
+    static void toggle_new(int a, int b, int c, int d) {
         for (int x = a; x <= c; x++) {
             for (int y = b; y <= d; y++) {
                 matrix_new[x][y] += 2;
@@ -126,7 +126,7 @@ public class Day6 {
         }
     }
 
-    private static void init() {
+    static void init() {
         for (int i = 0; i < 1000; i++) {
             for (int j = 0; j < 1000; j++) {
                 matrix_old[i][j] = -1;
@@ -134,7 +134,7 @@ public class Day6 {
         }
     }
 
-    private static void init_new() {
+    static void init_new() {
         for (int i = 0; i < 1000; i++) {
             for (int j = 0; j < 1000; j++) {
                 matrix_new[i][j] = 0;
@@ -142,7 +142,7 @@ public class Day6 {
         }
     }
 
-    private static int readOut() {
+    static int readOut() {
         int counter = 0;
         for (int i = 0; i < 1000; i++) {
             for (int j = 0; j < 1000; j++) {
@@ -154,7 +154,7 @@ public class Day6 {
         return counter;
     }
 
-    private static int readOut_new() {
+    static int readOut_new() {
         int counter = 0;
         for (int i = 0; i < 1000; i++) {
             for (int j = 0; j < 1000; j++) {
