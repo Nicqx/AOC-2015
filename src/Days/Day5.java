@@ -6,35 +6,33 @@ import java.util.ArrayList;
 
 public class Day5 {
     ArrayList<String> fileContent = new FileReader("resources/D5/input").fileReaderArrayList();
-    int counter_old = 0;
-    int counter_new = 0;
 
     public Day5() {
-        processFileContent();
-        System.out.println("D5 - The counter of nice strings with old rule is: " + counter_old);
-        System.out.println("D5/2 - The counter of nice strings with new rule is: " + counter_new);
+        System.out.println("D5 - The counter of nice strings with old rule is: " + counter(fileContent, true));
+        System.out.println("D5/2 - The counter of nice strings with new rule is: " + counter(fileContent, false));
     }
 
-    private void processFileContent() {
+    static int counter(ArrayList<String> fileContent, boolean old_method) {
+        int counter = 0;
         for (String line : fileContent) {
-            if (process_old(line)) {
-                counter_old++;
-            }
-            if (process_new(line)) {
-                counter_new++;
+            if (old_method && process_old(line)) {
+                counter++;
+            } else if (!old_method && process_new(line)) {
+                counter++;
             }
         }
+        return counter;
     }
 
-    private static boolean process_new(String text) {
+    static boolean process_new(String text) {
         return (repeatingPairsWOOverlapping(text) && repeatBetweenOne(text));
     }
 
-    private static boolean process_old(String text) {
+    static boolean process_old(String text) {
         return (restrictedGroups(text) && doubleLetter(text) && atLeastThreeVowel(text));
     }
 
-    private static boolean repeatingPairsWOOverlapping(String text) {
+    static boolean repeatingPairsWOOverlapping(String text) {
         char movingA = text.charAt(0);
         char movingB = text.charAt(1);
         boolean res = false;
@@ -51,7 +49,7 @@ public class Day5 {
         return res;
     }
 
-    private static boolean repeatBetweenOne(String text) {
+    static boolean repeatBetweenOne(String text) {
         boolean res = false;
         for (int i = 0; i < text.length() - 2; i++) {
             if (text.charAt(i) == text.charAt(i + 2)) {
@@ -62,7 +60,7 @@ public class Day5 {
         return res;
     }
 
-    private static boolean restrictedGroups(String text) {
+    static boolean restrictedGroups(String text) {
         boolean result = true;
         for (int i = 1; i < text.length(); i++) {
             if ((text.charAt(i - 1) == 'a' && text.charAt(i) == 'b') ||
@@ -77,7 +75,7 @@ public class Day5 {
     }
 
 
-    private static boolean doubleLetter(String text) {
+    static boolean doubleLetter(String text) {
         boolean result = false;
         for (int i = 1; i < text.length(); i++) {
             if (text.charAt(i) == text.charAt(i - 1)) {
@@ -89,7 +87,7 @@ public class Day5 {
         return result;
     }
 
-    private static boolean atLeastThreeVowel(String text) {
+    static boolean atLeastThreeVowel(String text) {
         int counter = 0;
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) == 'a' ||
