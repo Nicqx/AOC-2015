@@ -15,13 +15,13 @@ public class Day16 {
     Map<String, Integer> clues = new HashMap<>();
 
     public Day16() {
-        createClues();
-        processFileContent();
-        System.out.println("D16 - This numbered Aunt Sue gave the present: " + exactMach());
-        System.out.println("D16/2 - This numbered Aunt Sue gave the present: " + rangeMach());
+        createClues(clues);
+        processFileContent(knowledge, fileContent);
+        System.out.println("D16 - This numbered Aunt Sue gave the present: " + exactMach(knowledge, clues));
+        System.out.println("D16/2 - This numbered Aunt Sue gave the present: " + rangeMach(knowledge, clues));
     }
 
-    private void processFileContent() {
+    static void processFileContent(Map<Integer, Map<String, Integer>> knowledge, ArrayList<String> fileContent) {
         for (String line : fileContent) {
             Matcher matcher = Pattern.compile("(\\d+): (\\w+): (\\d+), (\\w++): (\\d+), (\\w+): (\\d+)").matcher(line);
             if (matcher.find()) {
@@ -34,7 +34,7 @@ public class Day16 {
         }
     }
 
-    private Object exactMach() {
+    static Object exactMach(Map<Integer, Map<String, Integer>> knowledge, Map<String, Integer> clues) {
         Map<Integer, Map<String, Integer>> knowledgeCopy = new HashMap<>();
         for (int element : knowledge.keySet()) {
             knowledgeCopy.put(element, knowledge.get(element));
@@ -53,7 +53,7 @@ public class Day16 {
         return knowledgeCopy.keySet().toArray()[0];
     }
 
-    private Object rangeMach() {
+    static Object rangeMach(Map<Integer, Map<String, Integer>> knowledge, Map<String, Integer> clues) {
         Map<Integer, Map<String, Integer>> knowledgeCopy = new HashMap<>();
         for (int element : knowledge.keySet()) {
             knowledgeCopy.put(element, knowledge.get(element));
@@ -87,7 +87,7 @@ public class Day16 {
         return knowledgeCopy.keySet().toArray()[1];
     }
 
-    private void createClues() {
+    static void createClues(Map<String, Integer> clues) {
         clues.put("children", 3);
         clues.put("cats", 7);
         clues.put("samoyeds", 2);
