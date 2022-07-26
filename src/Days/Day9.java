@@ -12,20 +12,14 @@ import java.util.regex.Pattern;
 public class Day9 {
     ArrayList<String> fileContent = new FileReader("resources/D9/input").fileReaderArrayList();
     ArrayList<Distances> distanceMatrix = new ArrayList<>();
-    Set<String> citiesSet = new HashSet<>();
-    static ArrayList<String> citiesPermutationList = new ArrayList<>();
-    int minDistance = Integer.MAX_VALUE;
-    int maxDistance = Integer.MIN_VALUE;
 
     public Day9() {
-        processFileContent();
-        createCitiesSet();
-        calculateDistances();
-        System.out.println("D9 - the shortest distance is: " + minDistance);
-        System.out.println("D9/2 - the longest distance is: " + maxDistance);
+        processFileContent(fileContent, distanceMatrix);
+        System.out.println("D9 - the shortest distance is: " + calculateDistances(distanceMatrix, true));
+        System.out.println("D9/2 - the longest distance is: " + calculateDistances(distanceMatrix, false));
     }
 
-    private void processFileContent() {
+    static void processFileContent(ArrayList<String> fileContent, ArrayList<Distances> distanceMatrix) {
         for (String line : fileContent) {
             Matcher matcher = Pattern.compile("(\\w+) to (\\w+) = (\\d+)").matcher(line);
             if (matcher.find()) {
@@ -34,24 +28,32 @@ public class Day9 {
         }
     }
 
-    private void calculateDistances() {
-        int n = citiesSet.size();
+    static int calculateDistances(ArrayList<Distances> distanceMatrix, boolean minSearch) {
+        int result;
+        if (minSearch){
+            result= Integer.MAX_VALUE;
+        }else{
+            result= Integer.MIN_VALUE;
+        }
+        ArrayList<String> citiesPermutationList = new ArrayList<>();
+        int n = createCitiesSet(distanceMatrix).size();
         String[] arr = new String[n];
-        String[] cityArray = citiesSet.toArray(arr);
-        permute(Arrays.asList(cityArray), 0);
+        String[] cityArray = createCitiesSet(distanceMatrix).toArray(arr);
+        permute(Arrays.asList(cityArray), 0, citiesPermutationList);
 
         for (String string : citiesPermutationList) {
             String tmp = string.replace("[", "").replace("]", "").replace(" ", "");
-            if (calculateRoute(tmp.split(",")) < minDistance) {
-                minDistance = calculateRoute(tmp.split(","));
+            if (minSearch && calculateRoute(tmp.split(","), distanceMatrix) < result) {
+                result = calculateRoute(tmp.split(","), distanceMatrix);
             }
-            if (calculateRoute(tmp.split(",")) > maxDistance) {
-                maxDistance = calculateRoute(tmp.split(","));
+            if (!minSearch && calculateRoute(tmp.split(","), distanceMatrix) > result) {
+                result = calculateRoute(tmp.split(","), distanceMatrix);
             }
         }
+        return result;
     }
 
-    private int calculateRoute(String[] a) {
+    static int calculateRoute(String[] a, ArrayList<Distances> distanceMatrix) {
         int sum = 0;
         for (int i = 1; i < a.length; i++) {
             String startCity = a[i - 1];
@@ -65,10 +67,10 @@ public class Day9 {
         return sum;
     }
 
-    static void permute(java.util.List<String> arr, int k) {
+    static void permute(java.util.List<String> arr, int k, ArrayList<String> citiesPermutationList) {
         for (int i = k; i < arr.size(); i++) {
             java.util.Collections.swap(arr, i, k);
-            permute(arr, k + 1);
+            permute(arr, k + 1, citiesPermutationList);
             java.util.Collections.swap(arr, k, i);
         }
         if (k == arr.size() - 1) {
@@ -76,13 +78,15 @@ public class Day9 {
         }
     }
 
-    private void createCitiesSet() {
+    static Set<String> createCitiesSet(ArrayList<Distances> distanceMatrix) {
+        Set<String> citiesSet = new HashSet<>();
         for (Distances distances : distanceMatrix) {
             citiesSet.add(distances.start());
             citiesSet.add(distances.end());
         }
+        return citiesSet;
     }
 
-    private record Distances(String start, String end, int distance) {
+    record Distances(String start, String end, int distance) {
     }
 }
