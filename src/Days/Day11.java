@@ -14,18 +14,18 @@ public class Day11 {
         System.out.println("D11/2 - the next valid password is: " + findNext(password));
     }
 
-    private String findNext(String password) {
+    static String findNext(String password) {
         do {
             password = increment(password, password.length() - 1);
         } while (validate(password));
         return password;
     }
 
-    private boolean validate(String password) {
+    static boolean validate(String password) {
         return checkProhibitedLetters(password) || checkThreeIncreasingLetter(password) || checkTwoDifferentOverlappingPairs(password);
     }
 
-    private boolean checkThreeIncreasingLetter(String password) {
+    static boolean checkThreeIncreasingLetter(String password) {
         byte[] charArray = password.getBytes(StandardCharsets.UTF_8);
         for (int i = 2; i < charArray.length; i++) {
             if ((charArray[i] == charArray[i - 1] + 1) && (charArray[i - 1] == charArray[i - 2] + 1)) {
@@ -35,7 +35,7 @@ public class Day11 {
         return true;
     }
 
-    private boolean checkTwoDifferentOverlappingPairs(String password) {
+    static boolean checkTwoDifferentOverlappingPairs(String password) {
         byte[] charArray = password.getBytes(StandardCharsets.UTF_8);
         for (int i = 0; i < charArray.length - 1; i++) {
             if (charArray[i] == charArray[i + 1]) {
@@ -49,7 +49,7 @@ public class Day11 {
         return true;
     }
 
-    private boolean checkProhibitedLetters(String password) {
+    static boolean checkProhibitedLetters(String password) {
         byte[] charArray = password.getBytes(StandardCharsets.UTF_8);
         for (byte b : charArray) {
             if ((b == 105) || (b == 108) || (b == 111)) {
@@ -59,7 +59,7 @@ public class Day11 {
         return false;
     }
 
-    private String increment(String password, int poz) {
+    static String increment(String password, int poz) {
         byte[] charArray = password.getBytes(StandardCharsets.UTF_8);
         if (charArray[poz] == 122) {
             charArray[poz] = (byte) (97);
