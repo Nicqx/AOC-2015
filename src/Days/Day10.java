@@ -9,16 +9,16 @@ import java.util.Map;
 
 public class Day10 {
     String text = new FileReader("resources/D10/input").fileReaderString();
-    private final Map<Character, Integer> store = new HashMap<>();
-    int iterations = 40;
+    final int ITERATIONS = 40;
 
     public Day10() {
-        System.out.println("D10 - the length of the string after " + iterations + " iteration(s) is: " + process(text, iterations).length());
+        System.out.println("D10 - the length of the string after " + ITERATIONS + " iteration(s) is: " + process(text, ITERATIONS).length());
 
-        System.out.println("D10/2 - the length of the string after " + (iterations + 10) + " iteration(s) is: " + process(text, iterations + 10).length());
+        System.out.println("D10/2 - the length of the string after " + (ITERATIONS + 10) + " iteration(s) is: " + process(text, ITERATIONS + 10).length());
     }
 
-    private String process(String text, int iterations) {
+    static String process(String text, int iterations) {
+        final Map<Character, Integer> store = new HashMap<>();
         String mainResult = text;
         while (iterations > 0) {
             store.clear();
