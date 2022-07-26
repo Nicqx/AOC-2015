@@ -8,40 +8,17 @@ import java.util.regex.Pattern;
 
 public class Day8 {
     ArrayList<String> fileContent = new FileReader("resources/D8/input").fileReaderArrayList();
-    ArrayList<String> fullString = new ArrayList<>();
-    ArrayList<Integer> charString = new ArrayList<>();
-    ArrayList<Integer> newCharString = new ArrayList<>();
 
     public Day8() {
-        processFileContent();
-        createCharString();
-        System.out.println("D8 - the needed amount of memory " + counterVal());
-        createNewFullString();
-        System.out.println("D8/2 - the needed amount of memory with the new rules " + counterValNewRules());
+        System.out.println("D8 - the needed amount of memory " + counterVal(fileContent));
+
+        System.out.println("D8/2 - the needed amount of memory with the new rules " + counterValNewRules(fileContent));
 
     }
 
-    private void processFileContent() {
-        fullString.addAll(fileContent);
-    }
-
-    private int counterVal() {
-        int sum = 0;
-        for (int i = 0; i < fullString.size(); i++) {
-            sum += fullString.get(i).length() - charString.get(i);
-        }
-        return sum;
-    }
-
-    private int counterValNewRules() {
-        int sum = 0;
-        for (int i = 0; i < fullString.size(); i++) {
-            sum += newCharString.get(i) - fullString.get(i).length();
-        }
-        return sum;
-    }
-
-    private void createCharString() {
+    static int counterVal(ArrayList<String> fileContent) {
+        ArrayList<String> fullString = new ArrayList<>(fileContent);
+        ArrayList<Integer> charString = new ArrayList<>();
         for (String val : fullString) {
             int counter = 0;
             val = val.substring(1, val.length() - 1);
@@ -57,9 +34,17 @@ public class Day8 {
             }
             charString.add(counter + val.length());
         }
+
+        int sum = 0;
+        for (int i = 0; i < fullString.size(); i++) {
+            sum += fullString.get(i).length() - charString.get(i);
+        }
+        return sum;
     }
 
-    private void createNewFullString() {
+    static int counterValNewRules(ArrayList<String> fileContent) {
+        ArrayList<String> fullString = new ArrayList<>(fileContent);
+        ArrayList<Integer> newCharString = new ArrayList<>();
         for (String val : fullString) {
             int counter = 6;
             val = val.substring(1, val.length() - 1);
@@ -75,5 +60,11 @@ public class Day8 {
             }
             newCharString.add(counter + val.length());
         }
+
+        int sum = 0;
+        for (int i = 0; i < fullString.size(); i++) {
+            sum += newCharString.get(i) - fullString.get(i).length();
+        }
+        return sum;
     }
 }
