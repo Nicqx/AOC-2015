@@ -16,15 +16,15 @@ public class Day13 {
     ArrayList<String> namesPermutationList = new ArrayList<>();
 
     public Day13() {
-        processFileContent();
-        System.out.println("D13 - the happiest value is: " + calcMaxHappiness());
+        processFileContent(fileContent, happinessMatrix);
+        System.out.println("D13 - the happiest value is: " + calcMaxHappiness(namesSet, namesPermutationList, happinessMatrix));
 
         namesPermutationList.clear();
-        addMyself();
-        System.out.println("D13/2 - the happiest value with me is: " + calcMaxHappiness());
+        addMyself(namesSet, happinessMatrix);
+        System.out.println("D13/2 - the happiest value with me is: " + calcMaxHappiness(namesSet, namesPermutationList, happinessMatrix));
     }
 
-    private void processFileContent() {
+    static void processFileContent(ArrayList<String> fileContent, ArrayList<Happiness> happinessMatrix) {
         for (String line : fileContent) {
             Matcher matcher = Pattern.compile("(\\w+) would gain (\\d+) happiness units by sitting next to (\\w+).").matcher(line);
             if (matcher.find()) {
@@ -37,31 +37,31 @@ public class Day13 {
         }
     }
 
-    private int calcMaxHappiness() {
+    static int calcMaxHappiness(Set<String> namesSet, ArrayList<String> namesPermutationList, ArrayList<Happiness> happinessMatrix) {
         int result = 0;
-        createPersonsSet();
+        createPersonsSet(happinessMatrix, namesSet);
         int n = namesSet.size();
         String[] arr = new String[n];
         String[] nameArray = namesSet.toArray(arr);
-        permute(Arrays.asList(nameArray), 0);
+        permute(Arrays.asList(nameArray), 0, namesPermutationList);
         for (String string : namesPermutationList) {
             String tmp = string.replace("[", "").replace("]", "").replace(" ", "");
             tmp = tmp + "," + tmp.split(",")[0];
-            if (calculateHappiness(tmp.split(",")) > result) {
-                result = calculateHappiness(tmp.split(","));
+            if (calculateHappiness(tmp.split(","), happinessMatrix) > result) {
+                result = calculateHappiness(tmp.split(","), happinessMatrix);
             }
         }
         return result;
     }
 
-    private void addMyself() {
+    static void addMyself(Set<String> namesSet, ArrayList<Happiness> happinessMatrix) {
         for (String name : namesSet) {
             happinessMatrix.add(new Happiness("Me", name, 0));
             happinessMatrix.add(new Happiness(name, "Me", 0));
         }
     }
 
-    private int calculateHappiness(String[] a) {
+    static int calculateHappiness(String[] a, ArrayList<Happiness> happinessMatrix) {
         int sum = 0;
         for (int i = 1; i < a.length; i++) {
             String firstPerson = a[i - 1];
@@ -74,17 +74,17 @@ public class Day13 {
         return sum;
     }
 
-    private void createPersonsSet() {
+    static void createPersonsSet(ArrayList<Happiness> happinessMatrix, Set<String> namesSet) {
         for (Happiness distances : happinessMatrix) {
             namesSet.add(distances.person1());
             namesSet.add(distances.person2());
         }
     }
 
-    private void permute(java.util.List<String> arr, int k) {
+    static void permute(java.util.List<String> arr, int k, ArrayList<String> namesPermutationList) {
         for (int i = k; i < arr.size(); i++) {
             java.util.Collections.swap(arr, i, k);
-            permute(arr, k + 1);
+            permute(arr, k + 1, namesPermutationList);
             java.util.Collections.swap(arr, k, i);
         }
         if (k == arr.size() - 1) {
@@ -92,6 +92,6 @@ public class Day13 {
         }
     }
 
-    private record Happiness(String person1, String person2, int value) {
+    record Happiness(String person1, String person2, int value) {
     }
 }
