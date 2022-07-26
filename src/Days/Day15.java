@@ -10,18 +10,18 @@ public class Day15 {
     ArrayList<String> fileContent = new FileReader("resources/D15/input").fileReaderArrayList();
     private static final int INGREDIENTS = 100;
     ArrayList<Ingredients> ingredientsList = new ArrayList<>();
-    final ArrayList<int[]> combinations = combinations();
+    ArrayList<int[]> combinations = combinations();
 
 
     public Day15() {
-        processFileContent();
+        processFileContent(fileContent, ingredientsList);
 
-        System.out.println("D15 - The highest-scoring cookie's score is: " + calculateHighestScoring());
+        System.out.println("D15 - The highest-scoring cookie's score is: " + calculateHighestScoring(combinations, ingredientsList));
 
-        System.out.println("D15/2 - The highest-scoring cookie with calorie limit score is: " + calculateHighestScoringWithCalorieLimits());
+        System.out.println("D15/2 - The highest-scoring cookie with calorie limit score is: " + calculateHighestScoringWithCalorieLimits(combinations, ingredientsList));
     }
 
-    private int calculateHighestScoringWithCalorieLimits() {
+    static int calculateHighestScoringWithCalorieLimits(ArrayList<int[]> combinations, ArrayList<Ingredients> ingredientsList) {
         int result = 0;
         for (int[] combination : combinations) {
             if (calculateScoreWithCalorieLimit(ingredientsList, combination) > result) {
@@ -31,7 +31,7 @@ public class Day15 {
         return result;
     }
 
-    private int calculateHighestScoring() {
+    static int calculateHighestScoring(ArrayList<int[]> combinations, ArrayList<Ingredients> ingredientsList) {
         int result = 0;
         for (int[] combination : combinations) {
             if (calculateScore(ingredientsList, combination) > result) {
@@ -41,7 +41,7 @@ public class Day15 {
         return result;
     }
 
-    private void processFileContent() {
+    static void processFileContent(ArrayList<String> fileContent, ArrayList<Ingredients> ingredientsList) {
         for (String line : fileContent) {
             Matcher matcher = Pattern.compile("(\\w+): capacity (-?\\d+), durability (-?\\d+), flavor (-?\\d+), texture (-?\\d+), calories (-?\\d+)").matcher(line);
             if (matcher.find()) {
@@ -50,7 +50,7 @@ public class Day15 {
         }
     }
 
-    private int calculateScore(ArrayList<Ingredients> ingredients, int[] combination) {
+    static int calculateScore(ArrayList<Ingredients> ingredients, int[] combination) {
         int capacity = 0;
         int durability = 0;
         int flavour = 0;
@@ -66,7 +66,7 @@ public class Day15 {
 
     }
 
-    private int calculateScoreWithCalorieLimit(ArrayList<Ingredients> ingredients, int[] combination) {
+    static int calculateScoreWithCalorieLimit(ArrayList<Ingredients> ingredients, int[] combination) {
         int capacity = 0;
         int durability = 0;
         int flavour = 0;
@@ -86,11 +86,11 @@ public class Day15 {
         }
     }
 
-    private int positiveResult(int value) {
+    static int positiveResult(int value) {
         return Math.max(value, 0);
     }
 
-    private static ArrayList<int[]> combinations() {
+    static ArrayList<int[]> combinations() {
         ArrayList<int[]> result = new ArrayList<>();
         for (int i = 0; i <= INGREDIENTS; i++) {
             for (int j = 0; j <= INGREDIENTS; j++) {
@@ -107,7 +107,7 @@ public class Day15 {
         return result;
     }
 
-    private record Ingredients(int capacity, int durability, int flavor, int texture, int calories) {
+    record Ingredients(int capacity, int durability, int flavor, int texture, int calories) {
     }
 
 }
