@@ -2,9 +2,6 @@ package Days;
 
 import utility.FileReader;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +13,7 @@ public class Day12 {
         System.out.println("D12/2 - the sum of all numbers without red: " + sumNum(omitRed(text)));
     }
 
-    private String omitRed(String text) {
+    static String omitRed(String text) {
         Stack<String> stack = new Stack<>();
         StringBuilder newString = new StringBuilder(text);
         for (int i = 0; i < text.length(); i++) {
@@ -46,7 +43,7 @@ public class Day12 {
         return newString.toString();
     }
 
-    private int sumNum(String text) {
+    static int sumNum(String text) {
         int sum = 0;
         Matcher matcher = Pattern.compile("(-?\\d+)").matcher(text);
         while (matcher.find()) {
