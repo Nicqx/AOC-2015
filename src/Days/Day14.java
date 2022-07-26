@@ -13,15 +13,15 @@ public class Day14 {
 
 
     public Day14() {
-        processFileContent();
+        processFileContent(fileContent, fleet);
 
-        System.out.println("D14 - The longest distance has the winning reindeer traveled is: " + maxDistance(RACETIME));
+        System.out.println("D14 - The longest distance has the winning reindeer traveled is: " + maxDistance(RACETIME, fleet));
 
-        System.out.println("D14/2 - The highest points the winning reindeer has: " + maxPoints(RACETIME));
+        System.out.println("D14/2 - The highest points the winning reindeer has: " + maxPoints(RACETIME, fleet));
 
     }
 
-    private void processFileContent() {
+    static void processFileContent(ArrayList<String> fileContent, ArrayList<Reindeer> fleet) {
         for (String line : fileContent) {
             Matcher matcher = Pattern.compile("(\\w+) can fly (\\d+) km/s for (\\d+) seconds, but then must rest for (\\d+) seconds.").matcher(line);
             if (matcher.find()) {
@@ -30,7 +30,7 @@ public class Day14 {
         }
     }
 
-    private int maxPoints(int raceTime) {
+    static int maxPoints(int raceTime, ArrayList<Reindeer> fleet) {
         int result = 0;
         competeAgain(raceTime, fleet);
         for (Reindeer racer : fleet) {
@@ -41,7 +41,7 @@ public class Day14 {
         return result;
     }
 
-    private int maxDistance(int raceTime) {
+    static int maxDistance(int raceTime, ArrayList<Reindeer> fleet) {
         int result = 0;
         for (Reindeer racer : fleet) {
             if (compete(racer, raceTime) > result) {
@@ -51,7 +51,7 @@ public class Day14 {
         return result;
     }
 
-    private void competeAgain(int time, ArrayList<Reindeer> fleet) {
+    static void competeAgain(int time, ArrayList<Reindeer> fleet) {
         int actualTime = time;
         while (actualTime > 0) {
             for (Reindeer racer : fleet) {
@@ -73,7 +73,7 @@ public class Day14 {
 
     }
 
-    private int compete(Reindeer racer, int time) {
+    static int compete(Reindeer racer, int time) {
         int result = 0;
         while (time > 0) {
             if (time - racer.getTime() > 0) {
