@@ -10,16 +10,16 @@ public class Day18 {
     final int ROUNDS = 100;
 
     public Day18() {
-        processFileContent();
-        process(false);
-        System.out.println("D18 - the number of lights are on after the " + ROUNDS + " rounds: " + countLightsOn());
+        processFileContent(fileContent, grid);
+        process(false, grid, ROUNDS);
+        System.out.println("D18 - the number of lights are on after the " + ROUNDS + " rounds: " + countLightsOn(grid));
 
-        processFileContent();
-        process(true);
-        System.out.println("D18/2 - the number of lights are on after the " + ROUNDS + " rounds with corner locks: " + countLightsOn());
+        processFileContent(fileContent, grid);
+        process(true, grid, ROUNDS);
+        System.out.println("D18/2 - the number of lights are on after the " + ROUNDS + " rounds with corner locks: " + countLightsOn(grid));
     }
 
-    private void processFileContent() {
+    static void processFileContent(ArrayList<String> fileContent, boolean[][] grid) {
         int i = 0;
         for (String line : fileContent) {
             int j = 0;
@@ -31,27 +31,27 @@ public class Day18 {
         }
     }
 
-    private void turnTheCorners() {
+    static void turnTheCorners(boolean[][] grid) {
         grid[0][0] = true;
         grid[0][99] = true;
         grid[99][0] = true;
         grid[99][99] = true;
     }
 
-    private void process(boolean lock) {
+    static void process(boolean lock, boolean[][] grid, int rounds) {
         if (lock) {
-            turnTheCorners();
+            turnTheCorners(grid);
         }
-        for (int r = 0; r < ROUNDS; r++) {
+        for (int r = 0; r < rounds; r++) {
             ArrayList<int[]> shouldBeChange = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
                 for (int j = 0; j < 100; j++) {
                     if (grid[i][j]) {
-                        if (countNeighboursOn(i, j) != 2 && countNeighboursOn(i, j) != 3) {
+                        if (countNeighboursOn(i, j, grid) != 2 && countNeighboursOn(i, j, grid) != 3) {
                             shouldBeChange.add(new int[]{i, j});
                         }
                     } else {
-                        if (countNeighboursOn(i, j) == 3) {
+                        if (countNeighboursOn(i, j, grid) == 3) {
                             shouldBeChange.add(new int[]{i, j});
                         }
                     }
@@ -60,20 +60,20 @@ public class Day18 {
             for (int[] ints : shouldBeChange) {
                 if (lock) {
                     if (!skipCorners(ints)) {
-                        changeLight(ints[0], ints[1]);
+                        changeLight(ints[0], ints[1], grid);
                     }
                 } else {
-                    changeLight(ints[0], ints[1]);
+                    changeLight(ints[0], ints[1], grid);
                 }
             }
         }
     }
 
-    private boolean skipCorners(int[] ints) {
+    static boolean skipCorners(int[] ints) {
         return (ints[0] == 0 && ints[1] == 0) || (ints[0] == 0 && ints[1] == 99) || (ints[0] == 99 && ints[1] == 0) || (ints[0] == 99 && ints[1] == 99);
     }
 
-    private int countLightsOn() {
+    static int countLightsOn(boolean[][] grid) {
         int result = 0;
         for (int i = 0; i < 100; i++) {
             for (int j = 0; j < 100; j++) {
@@ -85,36 +85,36 @@ public class Day18 {
         return result;
     }
 
-    private int countNeighboursOn(int i, int j) {
+    static int countNeighboursOn(int i, int j, boolean[][] grid) {
         int result = 0;
-        if (checkUpper(i, j)) {
+        if (checkUpper(i, j,grid)) {
             result++;
         }
-        if (checkLower(i, j)) {
+        if (checkLower(i, j, grid)) {
             result++;
         }
-        if (checkRight(i, j)) {
+        if (checkRight(i, j, grid)) {
             result++;
         }
-        if (checkLeft(i, j)) {
+        if (checkLeft(i, j, grid)) {
             result++;
         }
-        if (checkUpperLeft(i, j)) {
+        if (checkUpperLeft(i, j, grid)) {
             result++;
         }
-        if (checkUpperRight(i, j)) {
+        if (checkUpperRight(i, j, grid)) {
             result++;
         }
-        if (checkLowerLeft(i, j)) {
+        if (checkLowerLeft(i, j, grid)) {
             result++;
         }
-        if (checkLowerRight(i, j)) {
+        if (checkLowerRight(i, j, grid)) {
             result++;
         }
         return result;
     }
 
-    private boolean checkUpper(int i, int j) {
+    static boolean checkUpper(int i, int j, boolean[][] grid) {
         if (i > 0) {
             return grid[i - 1][j];
         } else {
@@ -122,7 +122,7 @@ public class Day18 {
         }
     }
 
-    private boolean checkLower(int i, int j) {
+    static boolean checkLower(int i, int j, boolean[][] grid) {
         if (i < 99) {
             return grid[i + 1][j];
         } else {
@@ -130,7 +130,7 @@ public class Day18 {
         }
     }
 
-    private boolean checkLeft(int i, int j) {
+    static boolean checkLeft(int i, int j, boolean[][] grid) {
         if (j > 0) {
             return grid[i][j - 1];
         } else {
@@ -138,7 +138,7 @@ public class Day18 {
         }
     }
 
-    private boolean checkRight(int i, int j) {
+    static boolean checkRight(int i, int j, boolean[][] grid) {
         if (j < 99) {
             return grid[i][j + 1];
         } else {
@@ -146,7 +146,7 @@ public class Day18 {
         }
     }
 
-    private boolean checkUpperLeft(int i, int j) {
+    static boolean checkUpperLeft(int i, int j, boolean[][] grid) {
         if (i > 0 && j > 0) {
             return grid[i - 1][j - 1];
         } else {
@@ -154,7 +154,7 @@ public class Day18 {
         }
     }
 
-    private boolean checkUpperRight(int i, int j) {
+    static boolean checkUpperRight(int i, int j, boolean[][] grid) {
         if (i > 0 && j < 99) {
             return grid[i - 1][j + 1];
         } else {
@@ -162,7 +162,7 @@ public class Day18 {
         }
     }
 
-    private boolean checkLowerLeft(int i, int j) {
+    static boolean checkLowerLeft(int i, int j, boolean[][] grid) {
         if (i < 99 && j > 0) {
             return grid[i + 1][j - 1];
         } else {
@@ -170,7 +170,7 @@ public class Day18 {
         }
     }
 
-    private boolean checkLowerRight(int i, int j) {
+    static boolean checkLowerRight(int i, int j, boolean[][] grid) {
         if (i < 99 && j < 99) {
             return grid[i + 1][j + 1];
         } else {
@@ -178,7 +178,7 @@ public class Day18 {
         }
     }
 
-    private void changeLight(int i, int j) {
+    static void changeLight(int i, int j, boolean[][] grid) {
         grid[i][j] = !grid[i][j];
     }
 
