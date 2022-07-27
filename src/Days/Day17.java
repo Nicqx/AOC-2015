@@ -11,20 +11,22 @@ public class Day17 {
     ArrayList<ArrayList<Integer>> variations = new ArrayList<>();
 
     public Day17() {
-        processFileContent();
-        generateVariations();
-        System.out.println("D17 - The possible variations to store all eggnog: " + getValidVariations());
-        System.out.println("D17/2 - The possible different variations to store all eggnog: " + getMinimalValidVariations());
+        processFileContent(fileContent, containers);
+        generateVariations(variations, containers);
+        variations=getValidVariations(variations,ALLAMOUNT);
+        System.out.println("D17 - The possible variations to store all eggnog: " + variations.size());
+        System.out.println("D17/2 - The possible different variations to store all eggnog: " + getMinimalValidVariations(variations));
 
     }
 
-    private void processFileContent() {
+    static void processFileContent(ArrayList<String> fileContent, ArrayList<Integer> containers) {
+        containers.clear();
         for (String line : fileContent) {
             containers.add(Integer.parseInt(line));
         }
     }
 
-    private int getMinimalValidVariations() {
+    static int getMinimalValidVariations(ArrayList<ArrayList<Integer>> variations) {
         int minimalLength = Integer.MAX_VALUE;
         for (ArrayList<Integer> variation : variations) {
             if (variation.size() < minimalLength) {
@@ -41,19 +43,18 @@ public class Day17 {
         return counter;
     }
 
-    private int getValidVariations() {
+    static ArrayList<ArrayList<Integer>> getValidVariations(ArrayList<ArrayList<Integer>> variations, int allAmount) {
         ArrayList<ArrayList<Integer>> tempVariations = new ArrayList<>();
         for (ArrayList<Integer> variation : variations) {
-            if (variation.stream().mapToDouble(a -> a).sum() == ALLAMOUNT) {
+            if (variation.stream().mapToDouble(a -> a).sum() == allAmount) {
                 tempVariations.add(variation);
             }
         }
         variations = tempVariations;
-        return variations.size();
+        return variations;
     }
 
-    private void generateVariations() {
-        variations.clear();
+    static void generateVariations(ArrayList<ArrayList<Integer>> variations, ArrayList<Integer> containers) {
         int[] Input_Array = containers.stream().mapToInt(i -> i).toArray();
         int n = Input_Array.length;
         for (int i = 1; i <= containers.size(); i++) {
