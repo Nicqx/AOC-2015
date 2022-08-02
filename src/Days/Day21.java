@@ -14,37 +14,49 @@ public class Day21 {
     static Map<Integer, Weapon> weaponShop = new HashMap<>();
     static Map<Integer, Armor> armorShop = new HashMap<>();
     static Map<Integer, Ring> ringShop = new HashMap<>();
-    int bossHit;
-    int bossDamage;
-    int bossArmor;
 
     public Day21() {
 
-        processFileContent();
+        ProcessedFileContent prfc = processFileContent(fileContent);
         initShop();
-        System.out.println("D21 - The minimal cost when player is win: " + genFightMinimalCost(bossHit, bossDamage, bossArmor));
-        System.out.println("D21/2 - The maximal cost when player is lose: " + genFightMaximalLosingCost(bossHit, bossDamage, bossArmor));
+        System.out.println("D21 - The minimal cost when player is win: " + genFightMinimalCost(prfc.bossHit, prfc.bossDamage, prfc.bossArmor));
+        System.out.println("D21/2 - The maximal cost when player is lose: " + genFightMaximalLosingCost(prfc.bossHit, prfc.bossDamage, prfc.bossArmor));
     }
 
-    private void processFileContent() {
-            for (String line : fileContent) {
-                Matcher matcher = Pattern.compile("Hit Points: (\\d+)").matcher(line);
-                if (matcher.find()) {
-                    bossHit = Integer.parseInt(matcher.group(1));
-                }
-                matcher = Pattern.compile("Damage: (\\d+)").matcher(line);
-                if (matcher.find()) {
-                    bossDamage = Integer.parseInt(matcher.group(1));
-                }
-                matcher = Pattern.compile("Armor: (\\d+)").matcher(line);
-                if (matcher.find()) {
-                    bossArmor = Integer.parseInt(matcher.group(1));
-                }
+    static ProcessedFileContent processFileContent(ArrayList<String> fileContent) {
+        int bossHit = 0;
+        int bossDamage = 0;
+        int bossArmor = 0;
+        for (String line : fileContent) {
+            Matcher matcher = Pattern.compile("Hit Points: (\\d+)").matcher(line);
+            if (matcher.find()) {
+                bossHit = Integer.parseInt(matcher.group(1));
             }
-
+            matcher = Pattern.compile("Damage: (\\d+)").matcher(line);
+            if (matcher.find()) {
+                bossDamage = Integer.parseInt(matcher.group(1));
+            }
+            matcher = Pattern.compile("Armor: (\\d+)").matcher(line);
+            if (matcher.find()) {
+                bossArmor = Integer.parseInt(matcher.group(1));
+            }
+        }
+        return new ProcessedFileContent(bossHit, bossDamage, bossArmor);
     }
 
-    private int genFightMinimalCost(int bossHit, int bossDamage, int bossArmor) {
+    static class ProcessedFileContent {
+        int bossHit;
+        int bossDamage;
+        int bossArmor;
+
+        public ProcessedFileContent(int bossHit, int bossDamage, int bossArmor) {
+            this.bossHit = bossHit;
+            this.bossDamage = bossDamage;
+            this.bossArmor = bossArmor;
+        }
+    }
+
+    static int genFightMinimalCost(int bossHit, int bossDamage, int bossArmor) {
         int minimalCost = Integer.MAX_VALUE;
         for (int weapon = 0; weapon <= 4; weapon++) {
             for (int armor = -1; armor <= 4; armor++) {
@@ -62,7 +74,7 @@ public class Day21 {
         return minimalCost;
     }
 
-    private int genFightMaximalLosingCost(int bossHitBase, int bossDamageBase, int bossArmorBase) {
+    static int genFightMaximalLosingCost(int bossHitBase, int bossDamageBase, int bossArmorBase) {
         int maximalCost = Integer.MIN_VALUE;
         for (int playerWeapon = 0; playerWeapon <= 4; playerWeapon++) {
             for (int playerArmor = -1; playerArmor <= 4; playerArmor++) {
@@ -82,7 +94,7 @@ public class Day21 {
     }
 
 
-    private boolean isPlayerWin(Character player, Character boss) {
+    static boolean isPlayerWin(Character player, Character boss) {
         do {
             boss.setHit(boss.getHit() - Math.max(player.getDamage() - boss.getArmor(), 1));
             if (boss.getHit() <= 0) {
@@ -185,7 +197,7 @@ public class Day21 {
         }
     }
 
-    private void initShop() {
+    static void initShop() {
         weaponShop.put(0, new Weapon("Dagger", 8, 4, 0));
         weaponShop.put(1, new Weapon("Shortsword", 10, 5, 0));
         weaponShop.put(2, new Weapon("Warhammer", 25, 6, 0));
