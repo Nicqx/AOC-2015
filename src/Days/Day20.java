@@ -8,16 +8,14 @@ import java.util.Map;
 
 public class Day20 {
     String text = new FileReader("resources/D20/input").fileReaderString();
-    int requestedPresents;
     static Map<Integer, Integer> globalDividers = new HashMap<>();
 
     public Day20() {
-        requestedPresents = Integer.parseInt(text);
-        System.out.println("D20 - The minimal number of house which got the requested amount of presents: " + processFirstPart());
-        System.out.println("D20/2 - The minimal number of house which got the requested amount of presents with the new rules: " + processSecondPart());
+        System.out.println("D20 - The minimal number of house which got the requested amount of presents: " + processFirstPart(Integer.parseInt(text)));
+        System.out.println("D20/2 - The minimal number of house which got the requested amount of presents with the new rules: " + processSecondPart(Integer.parseInt(text), globalDividers));
     }
 
-    private int processFirstPart() {
+    static int processFirstPart(int requestedPresents) {
         int i = 0;
         int result;
         do {
@@ -27,12 +25,12 @@ public class Day20 {
         return i;
     }
 
-    private int processSecondPart() {
+    static int processSecondPart(int requestedPresents, Map<Integer, Integer> globalDividers) {
         int i = 0;
         int result;
         do {
             i++;
-            result = sumDividersSecond(i);
+            result = sumDividersSecond(i, globalDividers);
         } while (result < requestedPresents);
         return i;
     }
@@ -47,7 +45,7 @@ public class Day20 {
         return dividers.stream().mapToInt(Integer::intValue).sum() * 10;
     }
 
-    private static int sumDividersSecond(int value) {
+    private static int sumDividersSecond(int value, Map<Integer, Integer> globalDividers) {
         ArrayList<Integer> dividers = new ArrayList<>();
         for (int i = value; i > 0; i--) {
             if (value % i == 0) {
