@@ -8,24 +8,24 @@ import java.util.regex.Pattern;
 
 public class Day23 {
     ArrayList<String> fileContent = new FileReader("resources/D23/input").fileReaderArrayList();
-    Registers registers;
 
     public Day23() {
-        calculateB(0);
+        Registers registers = calculateB(0, fileContent);
         System.out.println("D23 - the value in register b: " + registers.getB());
-        calculateB(1);
+        registers = calculateB(1, fileContent);
         System.out.println("D23/2 - the value in register b: " + registers.getB());
     }
 
-    private void calculateB(int a) {
-        registers = new Registers(a, 0);
+    static Registers calculateB(int a, ArrayList<String> fileContent) {
+        Registers registers = new Registers(a, 0);
         boolean found;
         do {
-            found = process(registers);
+            found = process(registers, fileContent);
         } while (found);
+        return registers;
     }
 
-    private boolean process(Registers registers) {
+    static boolean process(Registers registers, ArrayList<String> fileContent) {
         if (fileContent.size() < registers.getNextCoord() + 1 || registers.getNextCoord() < 0) {
             return false;
         }
