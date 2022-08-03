@@ -7,26 +7,25 @@ import java.util.ArrayList;
 public class Day24 {
     ArrayList<String> fileContent = new FileReader("resources/D24/input").fileReaderArrayList();
 
-    ArrayList<Integer> numbers = new ArrayList<>();
-    ArrayList<ArrayList<Integer>> variations = new ArrayList<>();
-    int sum;
-
     public Day24() {
-        processFileContent();
-        sum = numbers.stream().mapToInt(Integer::intValue).sum();
-        generateVariations(3);
-        System.out.println("D24 - the QE for the first group: " + minimalQEinMinimalPiece());
-        generateVariations(4);
-        System.out.println("D24/2 - the QE for the first group with 4 place: " + minimalQEinMinimalPiece());
+        ArrayList<Integer> numbers = processFileContent(fileContent);
+        ArrayList<ArrayList<Integer>> variations = new ArrayList<>();
+
+        generateVariations(3, variations, numbers);
+        System.out.println("D24 - the QE for the first group: " + minimalQEinMinimalPiece(variations));
+        generateVariations(4, variations, numbers);
+        System.out.println("D24/2 - the QE for the first group with 4 place: " + minimalQEinMinimalPiece(variations));
     }
 
-    private void processFileContent() {
+    static ArrayList<Integer> processFileContent(ArrayList<String> fileContent) {
+        ArrayList<Integer> numbers = new ArrayList<>();
         for (String line : fileContent) {
             numbers.add(Integer.parseInt(line));
         }
+        return numbers;
     }
 
-    private long minimalQEinMinimalPiece() {
+    static long minimalQEinMinimalPiece(ArrayList<ArrayList<Integer>> variations) {
         long minQE = Long.MAX_VALUE;
         int minPiece = Integer.MAX_VALUE;
         for (ArrayList<Integer> element : variations) {
@@ -53,7 +52,8 @@ public class Day24 {
         return minQE;
     }
 
-    private void generateVariations(int div) {
+    static void generateVariations(int div, ArrayList<ArrayList<Integer>> variations, ArrayList<Integer> numbers) {
+        int sum = numbers.stream().mapToInt(Integer::intValue).sum();
         variations.clear();
         int[] Input_Array = numbers.stream().mapToInt(i -> i).toArray();
         int n = Input_Array.length;
